@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FORMA 불당 헬스&amp;필라테스</title>
+<meta name="description" content="천안 불당동 헬스 & 필라테스. 1:1 PT, 기구 필라테스, 그룹 레슨, 체형 분석 기반 맞춤 운동.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 강도(웨이트)와 균형(필라테스)을 좌우 대비로 — 넓은 Archivo 숫자/라틴 디스플레이 + 차분한 한글 본문, 코발트 하나만 강조 */
+:root {
+  --bg: #F2F4F3;
+  --surface: #FFFFFF;
+  --ink: #0E1E22;
+  --muted: #56676A;
+  --line: #D3DBDA;
+  --accent: #2545DB;
+  --accent-ink: #FFFFFF;
+  --soft: #E2E7F8;
+  --sage: #5E8C7E;
+  --photo-a: #DCE3E1;
+  --photo-b: #CFD8D6;
+
+  --f-display: "Archivo", "IBM Plex Sans KR", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --wrap: 1180px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1416; --surface: #132023; --ink: #E7EEED; --muted: #94A5A7; --line: #233539;
+    --accent: #7590FF; --accent-ink: #0A1230; --soft: #1A2547; --sage: #8DB9AB;
+    --photo-a: #1A292C; --photo-b: #152225; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1416; --surface: #132023; --ink: #E7EEED; --muted: #94A5A7; --line: #233539;
+  --accent: #7590FF; --accent-ink: #0A1230; --soft: #1A2547; --sage: #8DB9AB;
+  --photo-a: #1A292C; --photo-b: #152225; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.65;
+  word-break: keep-all; -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3 { margin: 0; line-height: 1.2; text-wrap: balance; letter-spacing: -0.02em; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+.eyebrow {
+  font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); display: flex; align-items: center; gap: 10px;
+}
+.eyebrow::before { content: ""; width: 18px; height: 2px; background: var(--accent); }
+.sec { padding-block: clamp(72px, 10vw, 128px); border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 16px; margin-bottom: clamp(36px, 5vw, 56px); max-width: 720px; }
+.sec-head h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 700; }
+.sec-head p { color: var(--muted); font-size: 17px; max-width: 60ch; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid transparent;
+  font: 700 15px/1 var(--f-body); text-decoration: none; cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--ink); }
+
+/* Header */
+.hdr {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.hdr .wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 68px; }
+.logo { display: flex; align-items: baseline; gap: 10px; text-decoration: none; }
+.logo b { font: 900 24px/1 var(--f-display); font-stretch: 125%; letter-spacing: 0.02em; }
+.logo span { font: 500 11px/1 var(--f-mono); letter-spacing: .12em; color: var(--muted); }
+.nav { display: flex; align-items: center; gap: 28px; }
+.nav a:not(.btn) { text-decoration: none; font-size: 15px; font-weight: 500; color: var(--muted); }
+.nav a:not(.btn):hover { color: var(--ink); }
+.menu-btn { display: none; background: none; border: 1px solid var(--line); border-radius: 10px; width: 44px; height: 44px; color: var(--ink); cursor: pointer; }
+@media (max-width: 860px) {
+  .menu-btn { display: inline-grid; place-items: center; }
+  .nav { position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0;
+    background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px var(--gutter) 20px; display: none; }
+  .nav.open { display: flex; }
+  .nav a:not(.btn) { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 17px; color: var(--ink); }
+  .nav .btn { margin-top: 16px; }
+}
+
+/* Hero */
+.hero { padding-block: clamp(40px, 7vw, 88px) clamp(56px, 8vw, 104px); }
+.hero .wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+.hero-copy { display: grid; gap: 28px; min-width: 0; }
+.hero h1 { font-size: clamp(38px, 6.2vw, 76px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.12; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero .lead { font-size: clamp(16px, 1.6vw, 19px); color: var(--muted); max-width: 46ch; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.hero-tags li { font-size: 13px; font-weight: 500; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); }
+
+.photo {
+  position: relative; border-radius: var(--radius); overflow: hidden; max-width: 100%;
+  background:
+    repeating-linear-gradient(135deg, transparent 0 14px, color-mix(in srgb, var(--ink) 4%, transparent) 14px 15px),
+    linear-gradient(160deg, var(--photo-a), var(--photo-b));
+}
+.photo .ph-label {
+  position: absolute; left: 14px; bottom: 12px; font: 500 11px/1.3 var(--f-mono); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.hero-visual { position: relative; min-width: 0; }
+.hero-visual .photo { aspect-ratio: 4 / 5; }
+.hero-word {
+  position: absolute; inset: auto 0 18% 0; text-align: center; pointer-events: none;
+  font: 900 clamp(56px, 9vw, 120px)/0.9 var(--f-display); font-stretch: 125%; letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.today {
+  position: absolute; left: -28px; bottom: 28px; width: min(300px, 86%);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; box-shadow: 0 18px 40px -20px color-mix(in srgb, var(--ink) 35%, transparent);
+}
+.today h3 { font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.today h3 small { font: 500 11px var(--f-mono); color: var(--muted); letter-spacing: .08em; }
+.today ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.today li { display: grid; grid-template-columns: 52px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.today time { font: 600 14px var(--f-display); font-variant-numeric: tabular-nums; }
+.seat { font: 500 11px var(--f-mono); color: var(--muted); }
+.seat.low { color: var(--accent); }
+.badge-ex { position: absolute; top: 14px; right: 14px; font: 500 10px var(--f-mono); letter-spacing: .1em; background: var(--surface); color: var(--muted); padding: 5px 8px; border-radius: 6px; }
+@media (max-width: 860px) {
+  .hero .wrap { grid-template-columns: 1fr; }
+  .hero-visual .photo { aspect-ratio: 5 / 4; }
+  .today { position: relative; left: auto; bottom: auto; width: auto; margin: -48px 16px 0; }
+}
+
+/* Two disciplines */
+.duo { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.duo > div { padding: clamp(28px, 4vw, 48px); display: grid; gap: 14px; align-content: start; min-width: 0; }
+.duo > div + div { border-left: 1px solid var(--line); }
+.duo .big { font: 900 clamp(40px, 6vw, 72px)/0.9 var(--f-display); font-stretch: 125%; letter-spacing: -0.01em; }
+.duo .gym .big { color: var(--ink); }
+.duo .pil .big { color: var(--sage); }
+.duo h3 { font-size: 20px; font-weight: 700; }
+.duo p { color: var(--muted); }
+.duo ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.duo li { display: flex; gap: 10px; font-size: 15px; }
+.duo li::before { content: ""; flex: none; width: 6px; height: 6px; margin-top: 10px; border-radius: 50%; background: currentColor; opacity: .5; }
+@media (max-width: 760px) { .duo { grid-template-columns: 1fr; } .duo > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+
+/* Process (실제 순서이므로 번호 사용) */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: s; }
+.steps li { counter-increment: s; padding: 28px 24px 0 0; border-top: 2px solid var(--ink); display: grid; gap: 10px; align-content: start; min-width: 0; }
+.steps li + li { padding-left: 24px; }
+.steps li::before { content: "STEP " counter(s, decimal-leading-zero); font: 500 12px var(--f-mono); letter-spacing: .12em; color: var(--accent); }
+.steps h3 { font-size: 19px; font-weight: 700; }
+.steps p { color: var(--muted); font-size: 15px; }
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr 1fr; row-gap: 36px; } .steps li + li { padding-left: 0; } .steps li:nth-child(even) { padding-left: 20px; } }
+@media (max-width: 520px) { .steps { grid-template-columns: 1fr; } .steps li:nth-child(even) { padding-left: 0; } }
+
+/* Programs */
+.tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); margin-bottom: 28px; flex-wrap: wrap; }
+.tab { border: 0; background: transparent; color: var(--muted); font: 700 14px var(--f-body); padding: 10px 18px; border-radius: 999px; cursor: pointer; min-height: 40px; }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.prog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.prog { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.prog .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.prog .meta span { font: 500 11px var(--f-mono); letter-spacing: .06em; padding: 4px 8px; border-radius: 6px; background: var(--soft); color: var(--ink); }
+.prog h3 { font-size: 20px; font-weight: 700; }
+.prog p { color: var(--muted); font-size: 15px; }
+.prog .for { font-size: 14px; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
+.prog .for b { font-weight: 700; margin-right: 6px; }
+@media (max-width: 960px) { .prog-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .prog-grid { grid-template-columns: 1fr; } }
+
+/* Timetable */
+.tt { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.tt-days { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--line); }
+.tt-day { background: none; border: 0; padding: 14px 4px; font: 700 15px var(--f-body); color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; min-height: 52px; }
+.tt-day[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tt-day small { display: block; font: 500 10px var(--f-mono); letter-spacing: .08em; margin-top: 2px; }
+.tt-list { list-style: none; margin: 0; padding: 0; }
+.tt-list li { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--line); }
+.tt-list li:last-child { border-bottom: 0; }
+.tt-list time { font: 700 18px var(--f-display); font-variant-numeric: tabular-nums; }
+.tt-list .cls b { display: block; font-weight: 700; }
+.tt-list .cls span { font-size: 13px; color: var(--muted); }
+.lv { font: 500 11px var(--f-mono); letter-spacing: .06em; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.tt-empty { padding: 40px 24px; text-align: center; color: var(--muted); }
+.tt-note { margin-top: 14px; font-size: 13px; color: var(--muted); }
+@media (max-width: 600px) {
+  .tt-list li { grid-template-columns: 64px minmax(0, 1fr); padding: 14px 16px; row-gap: 6px; }
+  .tt-list .lv, .tt-list .seat { grid-column: 2; justify-self: start; }
+  .tt-day { font-size: 14px; }
+}
+
+/* Facility */
+.fac { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 12px; }
+.fac .photo:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.fac .photo:nth-child(4), .fac .photo:nth-child(5), .fac .photo:nth-child(6) { grid-column: span 2; }
+.fac-cap { position: absolute; left: 16px; top: 14px; font-weight: 700; font-size: 15px; }
+@media (max-width: 760px) { .fac { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; } .fac .photo:nth-child(5), .fac .photo:nth-child(6) { grid-column: span 1; } }
+
+/* Coaches */
+.coach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.coach { display: grid; gap: 12px; min-width: 0; }
+.coach .photo { aspect-ratio: 3 / 4; }
+.coach h3 { font-size: 18px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.coach h3 small { font: 500 11px var(--f-mono); letter-spacing: .1em; color: var(--accent); }
+.coach ul { margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); display: grid; gap: 2px; }
+@media (max-width: 960px) { .coach-grid { grid-template-columns: 1fr 1fr; } }
+
+/* Pricing */
+.price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; display: grid; gap: 18px; min-width: 0; }
+.plan.feat { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.plan .tag { font: 500 11px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+.plan.feat .tag b { color: var(--accent); font-weight: 500; }
+.plan h3 { font-size: 22px; font-weight: 700; }
+.amount { font: 800 clamp(30px, 3.4vw, 40px)/1 var(--f-display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.amount small { font: 500 14px var(--f-body); color: var(--muted); margin-left: 4px; letter-spacing: 0; }
+.plan ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 15px; }
+.plan li { display: flex; gap: 10px; }
+.plan li::before { content: "✓"; color: var(--accent); font-weight: 700; }
+.price-note { margin-top: 18px; font-size: 13px; color: var(--muted); }
+@media (max-width: 900px) { .price-grid { grid-template-columns: 1fr; max-width: 520px; } }
+
+/* Visit + Form */
+.visit { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); }
+.info { display: grid; gap: 0; align-content: start; }
+.info dl { margin: 0; display: grid; grid-template-columns: 100px minmax(0, 1fr); }
+.info dt, .info dd { padding: 16px 0; border-bottom: 1px solid var(--line); margin: 0; }
+.info dt { font: 500 12px/1.9 var(--f-mono); letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+.info dd { font-size: 15px; }
+.hours { display: grid; grid-template-columns: auto 1fr; column-gap: 16px; font-variant-numeric: tabular-nums; }
+.copy-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mini { font: 500 12px var(--f-body); padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: none; color: var(--muted); cursor: pointer; }
+.map-link { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.form { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(22px, 3vw, 36px); display: grid; gap: 16px; align-content: start; min-width: 0; }
+.form h3 { font-size: 22px; font-weight: 700; }
+.form p.sub { color: var(--muted); font-size: 14px; margin-top: -8px; }
+.field { display: grid; gap: 6px; }
+.field label, .field legend { font-size: 13px; font-weight: 700; padding: 0; }
+.field input, .field select, .field textarea {
+  width: 100%; min-height: 48px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--ink); font: 400 15px var(--f-body);
+}
+.field textarea { min-height: 88px; resize: vertical; }
+fieldset.field { border: 0; margin: 0; padding: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips label { position: relative; font-weight: 500; font-size: 14px; }
+.chips input { position: absolute; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.chips span { display: inline-block; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); cursor: pointer; }
+.chips input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chips input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.agree { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--muted); }
+.agree input { margin-top: 4px; }
+.form-done { padding: 14px 16px; border-radius: 10px; background: var(--soft); font-size: 14px; }
+@media (max-width: 860px) { .visit { grid-template-columns: 1fr; } }
+@media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
+
+/* Footer */
+.ftr { border-top: 1px solid var(--line); padding-block: 48px 120px; font-size: 13px; color: var(--muted); }
+.ftr .wrap { display: grid; gap: 18px; }
+.ftr .logo b { font-size: 20px; }
+.ftr address { font-style: normal; line-height: 1.9; }
+
+/* Mobile quick bar */
+.quick {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: none;
+  grid-template-columns: 1fr 1fr 1.4fr; gap: 8px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--bg) 94%, transparent); border-top: 1px solid var(--line);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.quick a { min-height: 46px; padding: 0 10px; font-size: 14px; }
+@media (max-width: 860px) { .quick { display: grid; } }
+@media (min-width: 861px) { .ftr { padding-bottom: 48px; } }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap">
+    <!-- 센터명 FORMA는 가칭입니다. 실제 상호/로고로 교체 -->
+    <a class="logo" href="#top" aria-label="FORMA 홈">
+      <b>FORMA</b><span>GYM · PILATES</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" aria-label="메뉴 열기">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="nav" id="nav">
+      <a href="#program">프로그램</a>
+      <a href="#schedule">시간표</a>
+      <a href="#facility">시설</a>
+      <a href="#coach">코치</a>
+      <a href="#price">이용권</a>
+      <a href="#visit">오시는 길</a>
+      <a class="btn btn-primary" href="#visit">무료 체험 신청</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Cheonan Buldang-dong · Gym &amp; Pilates</p>
+        <h1>근력은 <em>정확하게</em>,<br>움직임은 가볍게.</h1>
+        <p class="lead">체형 분석으로 시작해서 웨이트와 필라테스를 한 공간에서 설계합니다. 불당동에서 내 몸에 맞는 운동을 처음부터 제대로 배워보세요.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#visit">무료 체험 · 체형 분석 신청</a>
+          <a class="btn btn-ghost" href="#program">프로그램 보기</a>
+        </div>
+        <ul class="hero-tags" aria-label="주요 서비스">
+          <li>1:1 퍼스널 트레이닝</li>
+          <li>기구 필라테스</li>
+          <li>소그룹 레슨</li>
+          <li>인바디 · 체형 분석</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual">
+        <div class="photo" role="img" aria-label="센터 대표 사진 자리">
+          <span class="hero-word" aria-hidden="true">FORMA</span>
+          <span class="ph-label">Photo · 센터 대표 사진</span>
+        </div>
+        <aside class="today" aria-label="오늘의 그룹 수업 예시">
+          <h3>오늘의 그룹 수업 <small id="todayLabel">TODAY</small></h3>
+          <ul id="todayList"></ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">One Studio, Two Disciplines</p>
+        <h2>힘을 기르는 운동과 바르게 움직이는 운동을 함께</h2>
+        <p>웨이트로 근력과 대사량을 올리고, 필라테스로 코어와 정렬을 잡습니다. 두 가지를 따로 등록할 필요 없이 한 명의 담당자가 전체 루틴을 관리합니다.</p>
+      </div>
+      <div class="duo">
+        <div class="gym">
+          <span class="big">GYM</span>
+          <h3>헬스 · 퍼스널 트레이닝</h3>
+          <p>프리웨이트존과 머신존을 갖춘 웨이트 공간에서 목표별 프로그램을 진행합니다.</p>
+          <ul>
+            <li>체지방 감량 · 근력 향상 · 바디프로필</li>
+            <li>운동 처음이라면 기구 사용법부터 1:1로</li>
+            <li>매 수업 운동 일지와 식단 피드백</li>
+          </ul>
+        </div>
+        <div class="pil">
+          <span class="big">PILATES</span>
+          <h3>기구 필라테스 · 체형 교정</h3>
+          <p>리포머, 캐딜락, 체어, 바렐을 사용해 깊은 코어와 움직임의 질을 만듭니다.</p>
+          <ul>
+            <li>거북목 · 라운드숄더 · 골반 불균형 관리</li>
+            <li>1:1, 2:1 개인 레슨과 소그룹 레슨</li>
+            <li>산전 · 산후, 재활 후 회복 운동</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="process">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">First Visit</p>
+        <h2>처음 오시면 이렇게 진행됩니다</h2>
+        <p>감으로 시작하지 않습니다. 측정하고, 계획하고, 기록합니다.</p>
+      </div>
+      <ol class="steps">
+        <li><h3>상담</h3><p>운동 경험, 생활 패턴, 통증 부위와 목표를 확인합니다.</p></li>
+        <li><h3>인바디 · 체형 분석</h3><p>체성분과 자세 정렬, 관절 가동 범위를 측정합니다.</p></li>
+        <li><h3>맞춤 프로그램 설계</h3><p>웨이트와 필라테스 비율, 주간 횟수, 강도를 정합니다.</p></li>
+        <li><h3>4주 단위 리포트</h3><p>재측정 결과로 변화를 확인하고 다음 단계를 조정합니다.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="program">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Programs</p>
+        <h2>목표와 몸 상태에 맞는 프로그램</h2>
+      </div>
+      <div class="tabs" role="tablist" aria-label="프로그램 분류">
+        <button class="tab" role="tab" id="tab-all" aria-selected="true" data-filter="all">전체</button>
+        <button class="tab" role="tab" id="tab-gym" aria-selected="false" data-filter="gym">헬스</button>
+        <button class="tab" role="tab" id="tab-pil" aria-selected="false" data-filter="pil">필라테스</button>
+      </div>
+      <div class="prog-grid" id="progGrid">
+        <article class="prog" data-cat="gym">
+          <div class="meta"><span>1:1</span><span>50분</span></div>
+          <h3>퍼스널 트레이닝</h3>
+          <p>체형과 목표에 맞춘 웨이트 프로그램. 자세 교정부터 점진적 과부하까지 단계별로 진행합니다.</p>
+          <p class="for"><b>추천</b>운동이 처음인 분, 정체기를 겪는 분</p>
+        </article>
+        <article class="prog" data-cat="gym">
+          <div class="meta"><span>1:1</span><span>12주</span></div>
+          <h3>다이어트 · 바디프로필</h3>
+          <p>식단 관리와 주간 체성분 체크를 포함한 기간제 집중 프로그램입니다.</p>
+          <p class="for"><b>추천</b>기간 내 확실한 변화가 필요한 분</p>
+        </article>
+        <article class="prog" data-cat="gym">
+          <div class="meta"><span>자율</span><span>오리엔테이션</span></div>
+          <h3>헬스 회원권</h3>
+          <p>등록 시 기구 사용법 오리엔테이션과 인바디 측정을 제공합니다.</p>
+          <p class="for"><b>추천</b>혼자 운동 루틴이 있는 분</p>
+        </article>
+        <article class="prog" data-cat="pil">
+          <div class="meta"><span>1:1 · 2:1</span><span>50분</span></div>
+          <h3>개인 기구 필라테스</h3>
+          <p>리포머, 캐딜락, 체어, 바렐을 활용한 맞춤 레슨. 통증이나 불균형이 있다면 개인 레슨부터 권합니다.</p>
+          <p class="for"><b>추천</b>체형 교정, 통증 관리가 필요한 분</p>
+        </article>
+        <article class="prog" data-cat="pil">
+          <div class="meta"><span>정원 6명</span><span>50분</span></div>
+          <h3>소그룹 리포머</h3>
+          <p>레벨별로 나눈 그룹 수업. 강사가 한 명씩 자세를 확인할 수 있는 인원만 받습니다.</p>
+          <p class="for"><b>추천</b>꾸준한 습관을 만들고 싶은 분</p>
+        </article>
+        <article class="prog" data-cat="pil">
+          <div class="meta"><span>1:1</span><span>재활 연계</span></div>
+          <h3>산전 · 산후 / 회복 운동</h3>
+          <p>시기와 몸 상태에 맞춘 강도로 호흡, 골반저근, 코어 회복을 돕습니다.</p>
+          <p class="for"><b>추천</b>출산 전후, 부상 후 복귀하는 분</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="schedule">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Group Class Schedule</p>
+        <h2>그룹 필라테스 시간표</h2>
+        <p>요일을 선택하면 해당 요일 수업을 볼 수 있습니다. 개인 레슨은 상담 후 원하는 시간에 예약합니다.</p>
+      </div>
+      <div class="tt">
+        <div class="tt-days" role="tablist" aria-label="요일 선택" id="ttDays"></div>
+        <ul class="tt-list" id="ttList" aria-live="polite"></ul>
+      </div>
+      <p class="tt-note">※ 예시 시간표입니다. 실제 운영 시간표로 교체됩니다.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="facility">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Facility</p>
+        <h2>운동에 집중할 수 있는 공간</h2>
+        <p>웨이트존과 필라테스 스튜디오를 분리해 소음과 동선이 겹치지 않도록 구성했습니다.</p>
+      </div>
+      <div class="fac">
+        <div class="photo"><span class="fac-cap">웨이트존</span><span class="ph-label">Photo · 프리웨이트 / 랙</span></div>
+        <div class="photo"><span class="fac-cap">필라테스 스튜디오</span><span class="ph-label">Photo · 리포머</span></div>
+        <div class="photo"><span class="fac-cap">유산소존</span><span class="ph-label">Photo · 러닝머신</span></div>
+        <div class="photo"><span class="fac-cap">개인 레슨룸</span><span class="ph-label">Photo · 캐딜락 / 체어</span></div>
+        <div class="photo"><span class="fac-cap">파우더룸 · 샤워실</span><span class="ph-label">Photo · 탈의실</span></div>
+        <div class="photo"><span class="fac-cap">상담 · 측정</span><span class="ph-label">Photo · 인바디</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="coach">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Coaches</p>
+        <h2>담당 코치를 소개합니다</h2>
+        <p>모든 코치는 자격과 경력을 공개합니다.</p>
+      </div>
+      <div class="coach-grid">
+        <article class="coach">
+          <div class="photo"><span class="ph-label">Photo · 대표</span></div>
+          <h3>대표 코치 이름 <small>HEAD COACH</small></h3>
+          <ul><li>생활스포츠지도사 2급 (보디빌딩)</li><li>경력 · 자격 입력</li></ul>
+        </article>
+        <article class="coach">
+          <div class="photo"><span class="ph-label">Photo · 트레이너</span></div>
+          <h3>트레이너 이름 <small>PT</small></h3>
+          <ul><li>자격 입력</li><li>전문 분야 입력</li></ul>
+        </article>
+        <article class="coach">
+          <div class="photo"><span class="ph-label">Photo · 강사</span></div>
+          <h3>필라테스 강사 이름 <small>PILATES</small></h3>
+          <ul><li>필라테스 지도자 자격 입력</li><li>전문 분야 입력</li></ul>
+        </article>
+        <article class="coach">
+          <div class="photo"><span class="ph-label">Photo · 강사</span></div>
+          <h3>필라테스 강사 이름 <small>PILATES</small></h3>
+          <ul><li>필라테스 지도자 자격 입력</li><li>전문 분야 입력</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="price">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Membership</p>
+        <h2>이용권 안내</h2>
+        <p>모든 이용권에 첫 인바디 · 체형 분석이 포함됩니다.</p>
+      </div>
+      <div class="price-grid">
+        <article class="plan">
+          <p class="tag"><span>Gym</span></p>
+          <h3>헬스 회원권</h3>
+          <p class="amount">00,000<small>원 / 월</small></p>
+          <ul><li>웨이트 · 유산소존 자유 이용</li><li>기구 오리엔테이션 1회</li><li>운동복 · 수건 제공</li></ul>
+          <a class="btn btn-ghost" href="#visit">상담 신청</a>
+        </article>
+        <article class="plan feat">
+          <p class="tag"><span>Gym + Pilates</span><b>추천</b></p>
+          <h3>통합 회원권</h3>
+          <p class="amount">000,000<small>원 / 월</small></p>
+          <ul><li>헬스 자유 이용</li><li>소그룹 리포머 주 2회</li><li>4주마다 체형 재측정</li></ul>
+          <a class="btn btn-primary" href="#visit">상담 신청</a>
+        </article>
+        <article class="plan">
+          <p class="tag"><span>Private</span></p>
+          <h3>PT · 개인 필라테스</h3>
+          <p class="amount">00,000<small>원 / 회~</small></p>
+          <ul><li>1:1 또는 2:1 선택</li><li>횟수별 패키지 할인</li><li>헬스 이용 포함</li></ul>
+          <a class="btn btn-ghost" href="#visit">상담 신청</a>
+        </article>
+      </div>
+      <p class="price-note">※ 가격은 입력 전 자리 표시입니다. 부가세 포함 여부와 프로모션은 실제 정보로 교체됩니다.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="visit">
+    <div class="wrap visit">
+      <div class="info">
+        <div class="sec-head" style="margin-bottom:24px">
+          <p class="eyebrow">Visit</p>
+          <h2>불당동에서 만나요</h2>
+        </div>
+        <dl>
+          <dt>Address</dt>
+          <dd>
+            <div class="copy-row"><span id="addr">충청남도 천안시 서북구 불당동 (상세 주소 입력)</span><button class="mini" type="button" data-copy="addr">복사</button></div>
+          </dd>
+          <dt>Hours</dt>
+          <dd>
+            <div class="hours">
+              <span>평일</span><span>06:00 – 23:00</span>
+              <span>토요일</span><span>09:00 – 18:00</span>
+              <span>일 · 공휴일</span><span>10:00 – 17:00</span>
+            </div>
+          </dd>
+          <dt>Parking</dt>
+          <dd>건물 주차장 이용 (무료 시간 입력)</dd>
+          <dt>Call</dt>
+          <dd><div class="copy-row"><span id="tel">041-000-0000</span><button class="mini" type="button" data-copy="tel">복사</button></div></dd>
+        </dl>
+        <div class="map-link">
+          <a class="btn btn-ghost" href="https://map.naver.com/p/search/%EC%B2%9C%EC%95%88%20%EB%B6%88%EB%8B%B9%EB%8F%99" target="_blank" rel="noopener">네이버 지도에서 보기</a>
+          <a class="btn btn-ghost" href="https://map.kakao.com/?q=%EC%B2%9C%EC%95%88%20%EB%B6%88%EB%8B%B9%EB%8F%99" target="_blank" rel="noopener">카카오맵에서 보기</a>
+        </div>
+      </div>
+
+      <form class="form" id="trialForm" novalidate>
+        <h3>무료 체험 · 체형 분석 신청</h3>
+        <p class="sub">남겨주시면 영업시간 내에 연락드립니다.</p>
+        <div class="row2">
+          <div class="field"><label for="f-name">이름</label><input id="f-name" name="name" autocomplete="name" required></div>
+          <div class="field"><label for="f-phone">연락처</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required></div>
+        </div>
+        <fieldset class="field">
+          <legend>관심 프로그램</legend>
+          <div class="chips">
+            <label><input type="checkbox" id="f-p1" name="prog" value="PT"><span>퍼스널 트레이닝</span></label>
+            <label><input type="checkbox" id="f-p2" name="prog" value="개인 필라테스"><span>개인 필라테스</span></label>
+            <label><input type="checkbox" id="f-p3" name="prog" value="그룹 필라테스"><span>그룹 필라테스</span></label>
+            <label><input type="checkbox" id="f-p4" name="prog" value="헬스"><span>헬스</span></label>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="f-time">희망 방문 시간대</label>
+          <select id="f-time" name="time">
+            <option>평일 오전</option><option>평일 오후</option><option>평일 저녁</option><option>주말</option>
+          </select>
+        </div>
+        <div class="field"><label for="f-msg">목표나 불편한 부위 (선택)</label><textarea id="f-msg" name="msg" placeholder="예: 허리 통증이 있어요, 3개월 안에 5kg 감량하고 싶어요"></textarea></div>
+        <label class="agree"><input type="checkbox" id="f-agree" required>개인정보 수집 · 이용에 동의합니다. (상담 목적, 상담 완료 후 파기)</label>
+        <button class="btn btn-primary" type="submit">신청하기</button>
+        <p class="form-done" id="formMsg" hidden></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <a class="logo" href="#top"><b>FORMA</b><span>GYM · PILATES</span></a>
+    <address>
+      상호 FORMA 헬스&amp;필라테스 (가칭) · 대표 000 · 사업자등록번호 000-00-00000<br>
+      충청남도 천안시 서북구 불당동 (상세 주소) · 041-000-0000
+    </address>
+    <p>© 2026 FORMA. All rights reserved.</p>
+  </div>
+</footer>
+
+<div class="quick" aria-label="빠른 문의">
+  <a class="btn btn-ghost" href="tel:0410000000">전화</a>
+  <a class="btn btn-ghost" href="#visit">카톡 상담</a>
+  <a class="btn btn-primary" href="#trialForm">무료 체험 신청</a>
+</div>
+
+<script>
+(function () {
+  // 메뉴
+  var menuBtn = document.getElementById('menuBtn'), nav = document.getElementById('nav');
+  menuBtn.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+  nav.addEventListener('click', function (e) { if (e.target.closest('a')) { nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); } });
+
+  // 프로그램 필터
+  var tabs = document.querySelectorAll('.tabs .tab'), progs = document.querySelectorAll('#progGrid .prog');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t); });
+      var f = t.dataset.filter;
+      progs.forEach(function (p) { p.hidden = !(f === 'all' || p.dataset.cat === f); });
+    });
+  });
+
+  // 그룹 시간표 (예시 데이터 — 실제 시간표로 교체)
+  var DAYS = ['일', '월', '화', '수', '목', '금', '토'], EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var A = { t: '리포머 베이직', d: '입문 · 정렬과 호흡', lv: '입문' };
+  var B = { t: '리포머 코어', d: '중급 · 코어 강화', lv: '중급' };
+  var C = { t: '체어 & 바렐', d: '중급 · 밸런스와 유연성', lv: '중급' };
+  var D = { t: '바른자세 스트레칭', d: '입문 · 거북목 · 라운드숄더', lv: '입문' };
+  var S = {
+    0: [],
+    1: [['07:00', A, 2], ['10:00', D, 4], ['12:20', B, 1], ['19:00', A, 0], ['20:10', B, 3], ['21:20', C, 5]],
+    2: [['07:00', B, 3], ['10:00', A, 2], ['19:00', C, 1], ['20:10', A, 4], ['21:20', D, 6]],
+    3: [['07:00', A, 5], ['10:00', D, 2], ['12:20', B, 3], ['19:00', A, 1], ['20:10', B, 0], ['21:20', C, 2]],
+    4: [['07:00', B, 4], ['10:00', A, 1], ['19:00', C, 3], ['20:10', A, 2], ['21:20', D, 5]],
+    5: [['07:00', A, 3], ['10:00', D, 5], ['12:20', B, 2], ['19:00', A, 4], ['20:10', C, 6]],
+    6: [['10:00', A, 2], ['11:10', B, 1], ['12:20', D, 4]]
+  };
+  function seat(n) { return n === 0 ? ['마감', 'seat'] : n <= 2 ? ['잔여 ' + n + '석', 'seat low'] : ['잔여 ' + n + '석', 'seat']; }
+  var daysEl = document.getElementById('ttDays'), listEl = document.getElementById('ttList');
+  var today = new Date().getDay();
+  DAYS.forEach(function (d, i) {
+    var b = document.createElement('button');
+    b.className = 'tt-day'; b.setAttribute('role', 'tab'); b.id = 'tt-' + i;
+    b.innerHTML = d + '<small>' + EN[i] + '</small>';
+    b.addEventListener('click', function () { renderDay(i); });
+    daysEl.appendChild(b);
+  });
+  function row(c) {
+    var s = seat(c[2]);
+    return '<li><time>' + c[0] + '</time><div class="cls"><b>' + c[1].t + '</b><span>' + c[1].d + '</span></div>' +
+      '<span class="lv">' + c[1].lv + '</span><span class="' + s[1] + '">' + s[0] + '</span></li>';
+  }
+  function renderDay(i) {
+    daysEl.querySelectorAll('.tt-day').forEach(function (b, j) { b.setAttribute('aria-selected', j === i); });
+    listEl.innerHTML = S[i].length ? S[i].map(row).join('') : '<li class="tt-empty">일요일은 그룹 수업이 없습니다. 헬스장은 10:00–17:00 운영합니다.</li>';
+  }
+  renderDay(today);
+
+  // 히어로 '오늘의 수업' 카드
+  var tl = document.getElementById('todayList'), todays = S[today].length ? S[today] : S[1];
+  document.getElementById('todayLabel').textContent = S[today].length ? EN[today] : 'MON';
+  tl.innerHTML = todays.slice(-3).map(function (c) {
+    var s = seat(c[2]);
+    return '<li><time>' + c[0] + '</time><span>' + c[1].t + '</span><span class="' + s[1] + '">' + s[0] + '</span></li>';
+  }).join('');
+
+  // 복사 버튼
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var el = document.getElementById(btn.dataset.copy), txt = el.textContent;
+      function done() { btn.textContent = '복사됨'; setTimeout(function () { btn.textContent = '복사'; }, 1600); }
+      function fallback() { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      try { navigator.clipboard.writeText(txt).then(done, fallback); } catch (e) { fallback(); }
+    });
+  });
+
+  // 체험 신청 폼 (전송 기능은 연동 전 — 현재는 입력 확인만)
+  var form = document.getElementById('trialForm'), msg = document.getElementById('formMsg');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = form.name.value.trim(), phone = form.phone.value.trim();
+    msg.hidden = false;
+    if (!name || !phone) { msg.textContent = '이름과 연락처를 입력해 주세요.'; return; }
+    if (!/^0\d{1,2}-?\d{3,4}-?\d{4}$/.test(phone)) { msg.textContent = '연락처 형식을 확인해 주세요. 예: 010-1234-5678'; return; }
+    if (!document.getElementById('f-agree').checked) { msg.textContent = '개인정보 수집 · 이용에 동의해 주세요.'; return; }
+    msg.textContent = name + '님, 신청 내용이 확인되었습니다. (시안 단계: 실제 접수 연결은 다음 작업에서 진행합니다)';
+  });
+})();
+</script>
+</body>
+</html>
