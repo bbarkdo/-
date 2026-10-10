@@ -332,16 +332,15 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 
 /* Mascot */
 .pet { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; background: var(--warm); border-radius: 28px; padding: clamp(20px, 3vw, 36px); }
-.pet img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 70%; border-radius: 20px; }
 .pet-copy { display: grid; gap: 18px; min-width: 0; }
 .pet h2 { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; }
 .pet-copy > p { color: var(--muted); max-width: 46ch; }
-.pet-card { margin: 0; display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 12px 28px; padding: 16px 20px; background: var(--surface); border-radius: 14px; border: 1px dashed var(--line); }
+.pet-card { margin: 0; display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 12px 28px; padding: 16px 20px; background: var(--surface); border-radius: 14px; border: 1px dashed var(--line); }
 .pet-card div { display: grid; gap: 2px; }
 .pet-card dt { font: 500 11px var(--f-mono); letter-spacing: .1em; color: var(--muted); }
 .pet-card dd { margin: 0; font-weight: 700; font-size: 15px; }
 .pet .pet-note { font-size: 13px; }
-@media (max-width: 760px) { .pet { grid-template-columns: 1fr; } .pet img { aspect-ratio: 4 / 3.4; } .pet-card { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 760px) { .pet { grid-template-columns: 1fr; } .pet-polaroid { right: 4px; width: 40%; } .pet-card { grid-template-columns: 1fr 1fr; } }
 
 /* Journal */
 .journal { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; }
@@ -363,6 +362,22 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 .sms-box { display: grid; gap: 10px; }
 .sms-box pre { margin: 0; white-space: pre-wrap; font: 400 13px/1.6 var(--f-body); background: var(--surface); border-radius: 8px; padding: 12px; border: 1px solid var(--line); }
 .sms-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+
+/* Coach profile images (원본 그대로) */
+.profile { margin: 0; display: grid; gap: 10px; min-width: 0; }
+.profile a { display: block; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); transition: transform .2s ease, box-shadow .2s ease; }
+.profile a:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -22px rgba(0, 0, 0, 0.45); }
+.profile img { width: 100%; }
+.profile figcaption { font-size: 15px; color: var(--muted); }
+.profile figcaption b { color: var(--ink); font-size: 17px; margin-right: 4px; }
+.profile-hint { grid-column: 1 / -1; font-size: 13px; color: var(--muted); }
+.pet-photos { position: relative; min-width: 0; padding: 0 0 36px 0; }
+.pet .pet-main { width: 100%; aspect-ratio: 4 / 4.6; object-fit: cover; object-position: center 35%; border-radius: 20px; }
+.pet-polaroid { position: absolute; right: -14px; bottom: 0; width: 42%; margin: 0; background: #fff; padding: 8px 8px 0; border-radius: 6px; transform: rotate(4deg); box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.45); }
+.pet-polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: center 75%; border-radius: 3px; }
+.pet-polaroid figcaption { font-size: 12px; color: #4a4a4a; text-align: center; padding: 6px 0 8px; }
+.pet-name { color: var(--accent); }
 
 /* Footer */
 .ftr { border-top: 1px solid var(--line); padding-block: 48px 120px; font-size: 13px; color: var(--muted); }
@@ -624,54 +639,25 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
         <p>세 명의 코치 모두 국민체육진흥공단 생활스포츠지도사 자격을 보유하고 있습니다.</p>
       </div>
       <div class="coach-grid">
-        <article class="coach">
-          <img class="coach-img" src="assets/coach-park.jpg" alt="박도현 대표 트레이너 프로필 사진" loading="lazy">
-          <div class="coach-body">
-            <span class="role">CEO · Head Trainer</span>
-            <h3>박도현 <small>대표 트레이너</small></h3>
-            <p class="quote">운동을 &lsquo;할 수 있게&rsquo; 만들어주는 트레이너입니다. 정확한 분석과 강한 에너지로, 누구든 목표에 도달할 수 있도록 확실한 방향을 제시합니다.</p>
-            <div class="tags"><span>체형분석</span><span>근력향상</span><span>다이어트</span><span>골프 퍼포먼스</span><span>재활 트레이닝</span></div>
-            <details>
-              <summary>자격 · 경력 보기</summary>
-              <div class="cv">
-                <div><h4>자격</h4><ul><li>국민체육진흥공단 생활스포츠지도사 2급 보디빌딩</li><li>대한스포츠문화산업협회 스포츠영양트레이너</li><li>대한스포츠문화산업협회 재활트레이닝지도사</li><li>NASM-GFS 골프 트레이닝</li><li>대한안전연합 한국형수영장안전요원 2급</li></ul></div>
-                <div><h4>경력</h4><ul><li>現 LIFE DIRECTOR 대표</li><li>現 다이나믹웨이브 불당점 대표</li><li>現 연예인 야구단 &lsquo;천하무적야구단&rsquo; 소속 트레이너</li><li>前 천안 다이어트컨테이너 트레이너 및 실장</li><li>前 김포 JMS피트니스 트레이너</li><li>前 천안 김영모트레이닝센터 트레이너 및 센터장</li></ul></div>
-              </div>
-            </details>
-          </div>
-        </article>
-        <article class="coach">
-          <img class="coach-img" src="assets/coach-heo.jpg" alt="허은빈 대표원장 프로필 사진" loading="lazy">
-          <div class="coach-body">
-            <span class="role">Director · Pilates</span>
-            <h3>허은빈 <small>대표원장</small></h3>
-            <p class="quote">통증 개선과 체형 교정에 깊이 집중하며 매일 연구하고 성장하는 강사입니다. 정확한 큐잉과 시퀀스로 회원님의 변화를 만드는 데 가장 큰 보람을 느낍니다.</p>
-            <div class="tags"><span>통증개선</span><span>체형교정</span><span>산전 · 산후</span><span>여성 바디라인</span><span>키즈 필라테스</span></div>
-            <details>
-              <summary>자격 · 경력 보기</summary>
-              <div class="cv">
-                <div><h4>자격</h4><ul><li>Balanced Body(BBU) 자격</li><li>국민체육진흥공단 생활스포츠지도사 2급 보디빌딩</li><li>차의학대학원 대한선수퍼포먼스코치</li><li>적십자 응급처치법(심폐소생술)</li><li>Body1st 체형분석지도자</li><li>FMS (Functional Movement Screen)</li><li>H7 체형교정협회</li><li>BBU / BONUM 산전 · 산후 수료</li><li>Growing_edu 키즈 필라테스 수료</li><li>차의학대학원 스포츠테이핑 수료</li><li>척추 측만증 개선을 위한 슈로스 수료</li></ul></div>
-                <div><h4>경력</h4><ul><li>現 LIFE DIRECTOR 대표원장 트레이너</li><li>現 다이나믹웨이브 불당점 대표</li><li>前 포스트 필라테스 팀장</li><li>前 피어나필라테스 강사</li><li>前 바디멀티필라테스 금천점</li><li>前 올바로필라테스 메인강사</li><li>前 SJ 필라테스 (척추측만 전문 센터)</li><li>前 케어필라테스</li><li>前 함스짐 트레이너</li></ul></div>
-              </div>
-            </details>
-          </div>
-        </article>
-        <article class="coach">
-          <img class="coach-img" src="assets/coach-jeong.jpg" alt="정승우 PT 트레이너 프로필 사진" loading="lazy">
-          <div class="coach-body">
-            <span class="role">Trainer</span>
-            <h3>정승우 <small>PT 트레이너</small></h3>
-            <p class="quote">정확한 분석과 깔끔한 코칭으로 운동 목적에 맞춰 강도를 조절합니다. 남녀 모두 안정적인 변화를 빠르게 체감하고 꾸준히 성장하도록 이끕니다.</p>
-            <div class="tags"><span>다이어트</span><span>근력증가</span><span>기초체력</span><span>자세교정</span><span>운동습관 형성</span></div>
-            <details>
-              <summary>자격 · 경력 보기</summary>
-              <div class="cv">
-                <div><h4>자격</h4><ul><li>국민체육진흥공단 건강운동관리사 1급</li><li>국민체육진흥공단 생활스포츠지도사 2급 보디빌딩</li><li>대한운동사협회 KACEP</li><li>암환자 트레이닝 자격 수료</li><li>상명대학교(천안) 스포츠경영학과</li></ul></div>
-                <div><h4>경력</h4><ul><li>現 라이프디렉터 전임 트레이너</li><li>前 헬스보이짐 헬스&amp;PT 트레이너</li><li>前 이루짐 트레이너</li></ul></div>
-              </div>
-            </details>
-          </div>
-        </article>
+        <figure class="profile">
+          <a href="assets/profile-park.jpg" target="_blank" rel="noopener" aria-label="박도현 대표 트레이너 프로필 크게 보기">
+            <img src="assets/profile-park.jpg" alt="박도현 대표 트레이너 프로필. 생활스포츠지도사 2급 보디빌딩, 스포츠영양트레이너, 재활트레이닝지도사, NASM-GFS 골프 트레이닝, 한국형수영장안전요원 2급. 現 LIFE DIRECTOR 대표, 現 다이나믹웨이브 불당점 대표, 現 천하무적야구단 소속 트레이너. 전문 분야: 체형분석, 근력향상, 다이어트, 골프 퍼포먼스, 재활 트레이닝." loading="lazy" width="794" height="1123">
+          </a>
+          <figcaption><b>박도현</b> 대표 트레이너</figcaption>
+        </figure>
+        <figure class="profile">
+          <a href="assets/profile-heo.jpg" target="_blank" rel="noopener" aria-label="허은빈 대표원장 프로필 크게 보기">
+            <img src="assets/profile-heo.jpg" alt="허은빈 대표원장 트레이너 프로필. Balanced Body(BBU) 자격, 생활체육지도사 2급 보디빌딩, 대한선수퍼포먼스코치, Body1st 체형분석지도자, FMS, H7 체형교정협회, BBU/BONUM 산전 산후 수료, 키즈 필라테스 수료, 슈로스 수료. 現 LIFE DIRECTOR 대표원장 트레이너. 전문 분야: 통증개선, 체형교정, 산전·산후, 여성 바디라인, 키즈 필라테스." loading="lazy" width="794" height="1123">
+          </a>
+          <figcaption><b>허은빈</b> 대표원장</figcaption>
+        </figure>
+        <figure class="profile">
+          <a href="assets/profile-jeong.jpg" target="_blank" rel="noopener" aria-label="정승우 PT 트레이너 프로필 크게 보기">
+            <img src="assets/profile-jeong.jpg" alt="정승우 PT 트레이너 프로필. 상명대학교(천안) 스포츠경영학과, 건강운동관리사 1급, 생활체육지도사 2급 보디빌딩, 대한운동사협회 KACEP, 암환자 트레이닝 자격 수료. 現 라이프디렉터 전임 트레이너. 전문 분야: 다이어트, 근력증가, 기초체력, 자세교정, 운동습관 형성." loading="lazy" width="794" height="1123">
+          </a>
+          <figcaption><b>정승우</b> PT 트레이너</figcaption>
+        </figure>
+        <p class="profile-hint">이미지를 누르면 크게 볼 수 있습니다.</p>
       </div>
     </div>
   </section>
@@ -679,15 +665,22 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
   <section class="sec" id="mascot">
     <div class="wrap">
       <div class="pet">
-        <img src="assets/mascot.jpg" alt="소파 위에서 곤히 잠든 회색과 흰색 털의 강아지" loading="lazy" width="750" height="1000">
+        <div class="pet-photos">
+          <img class="pet-main" src="assets/mascot-smile.jpg" alt="혀를 살짝 내밀고 웃고 있는 비숑 박하" loading="lazy" width="750" height="1000">
+          <figure class="pet-polaroid">
+            <img src="assets/mascot.jpg" alt="소파에서 곤히 잠든 박하" loading="lazy" width="750" height="1000">
+            <figcaption>휴식 근무 중</figcaption>
+          </figure>
+        </div>
         <div class="pet-copy">
           <p class="eyebrow">Life Director&rsquo;s Mascot</p>
-          <h2>라이프디렉터의<br>막내 매니저를 소개합니다</h2>
-          <p>담당 업무는 회원님 맞이하기, 그리고 열심히 운동한 사람 옆에서 대신 쉬어주기. 오늘도 성실하게 낮잠 근무 중입니다.</p>
+          <h2>라이프디렉터 막내 매니저,<br><span class="pet-name">박하</span>를 소개합니다</h2>
+          <p>담당 업무는 회원님 맞이하기, 그리고 열심히 운동한 사람 옆에서 대신 쉬어주기. 박하처럼 상쾌한 미소로 오늘도 성실하게 근무 중입니다.</p>
           <dl class="pet-card">
+            <div><dt>이름</dt><dd>박하</dd></div>
+            <div><dt>견종</dt><dd>비숑</dd></div>
             <div><dt>직책</dt><dd>힐링 담당 매니저</dd></div>
-            <div><dt>특기</dt><dd>꿀잠, 꼬리 인사</dd></div>
-            <div><dt>근무 형태</dt><dd>자유 출근</dd></div>
+            <div><dt>특기</dt><dd>미소, 꿀잠</dd></div>
           </dl>
           <p class="pet-note">강아지를 무서워하거나 알레르기가 있으시면 방문 전에 알려주세요.</p>
         </div>
