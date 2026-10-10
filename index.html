@@ -48,6 +48,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
@@ -379,6 +380,55 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 .pet-polaroid figcaption { font-size: 12px; color: #4a4a4a; text-align: center; padding: 6px 0 8px; }
 .pet-name { color: var(--accent); }
 
+
+/* Event ribbon + section (전단지 톤: 블랙 + 레드, 두 테마 공통) */
+.ribbon { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; padding: 9px var(--gutter); background: #D2312A; color: #fff; text-decoration: none; font-size: 14px; font-weight: 700; text-align: center; }
+.ribbon:hover .ribbon-txt { text-decoration: underline; }
+.ribbon-tag { font: 500 11px var(--f-mono); letter-spacing: .12em; background: #111; padding: 3px 7px; border-radius: 4px; }
+.ribbon-short { display: none; }
+@media (max-width: 600px) { .ribbon { flex-wrap: nowrap; font-size: 13px; gap: 8px; } .ribbon-txt { display: none; } .ribbon-short { display: inline; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; } }
+.ribbon-dday { font: 700 12px var(--f-mono); background: #FFD43B; color: #111; padding: 3px 8px; border-radius: 4px; font-variant-numeric: tabular-nums; }
+.nav a.nav-ev { color: #D2312A; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+.nav a.nav-ev::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #D2312A; animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+.event { padding-block: 0 clamp(56px, 8vw, 96px); }
+.ev { background: #111315; color: #fff; border-radius: 24px; padding: clamp(24px, 4vw, 52px); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(28px, 4vw, 56px); align-items: center; position: relative; overflow: hidden; }
+.ev::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 80% at 100% 0%, rgba(210, 49, 42, 0.35), transparent 70%); pointer-events: none; }
+.ev > * { position: relative; }
+.ev-copy { display: grid; gap: 16px; min-width: 0; }
+.ev-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.ev-month { font: 500 12px var(--f-mono); letter-spacing: .12em; background: #D2312A; padding: 5px 10px; border-radius: 6px; }
+.ev-limit { font-size: 13px; font-weight: 700; background: #FFD43B; color: #111; padding: 4px 10px; border-radius: 6px; }
+.ev-limit:empty { display: none; }
+.ev-hook { color: #FFD43B; font-weight: 700; font-size: 15px; }
+.ev h2 { font-size: clamp(30px, 4.4vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; }
+.ev h2 em { font-style: normal; color: #FF5A4E; }
+.ev-sub { color: rgba(255, 255, 255, 0.75); font-size: 16px; }
+.ev-items { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ev-items li { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 15px; }
+.ev-items li.plus { background: none; border: 0; padding: 0; color: #FF5A4E; font-size: 18px; }
+.ev-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.16); }
+.ev-off { font: 800 15px var(--f-display); background: #FFD43B; color: #111; padding: 4px 9px; border-radius: 6px; align-self: center; }
+.ev-price s { color: rgba(255, 255, 255, 0.55); font-size: 17px; font-variant-numeric: tabular-nums; }
+.ev-price strong { font: 900 clamp(40px, 6vw, 64px)/1 var(--f-display); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; color: #fff; }
+.ev-price small { color: rgba(255, 255, 255, 0.6); font-size: 13px; }
+.ev-timer { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ev-timer-label { font-size: 13px; color: rgba(255, 255, 255, 0.7); }
+.ev-clock { display: inline-flex; gap: 6px; font-variant-numeric: tabular-nums; }
+.ev-clock span { display: grid; place-items: center; min-width: 52px; padding: 6px 8px; background: rgba(255, 255, 255, 0.08); border-radius: 8px; font: 800 20px/1.1 var(--f-display); }
+.ev-clock small { display: block; font: 500 10px var(--f-mono); letter-spacing: .08em; color: rgba(255, 255, 255, 0.6); }
+.ev-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.ev-btn { background: #D2312A; color: #fff; min-height: 52px; padding: 0 26px; font-size: 16px; }
+.ev-btn-ghost { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.35); min-height: 52px; }
+.ev-btn-ghost:hover { border-color: #fff; }
+.ev-note { font-size: 12.5px; color: rgba(255, 255, 255, 0.55); }
+.ev-flyer { display: block; position: relative; border-radius: 16px; overflow: hidden; text-decoration: none; transform: rotate(2deg); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8); transition: transform .2s ease; }
+.ev-flyer:hover { transform: rotate(0deg) scale(1.01); }
+.ev-flyer img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.ev-flyer span { position: absolute; right: 12px; bottom: 12px; background: rgba(0, 0, 0, 0.7); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 999px; }
+@media (max-width: 860px) { .ev { grid-template-columns: 1fr; } .ev-flyer { order: -1; transform: none; } }
+@media (max-width: 420px) { .ev-clock span { min-width: 44px; font-size: 17px; } }
+
 /* Footer */
 .ftr { border-top: 1px solid var(--line); padding-block: 48px 120px; font-size: 13px; color: var(--muted); }
 .ftr .wrap { display: grid; gap: 18px; }
@@ -397,9 +447,18 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 @media (max-width: 860px) { .quick { display: grid; } }
 @media (min-width: 861px) { .ftr { padding-bottom: 48px; } }
 </style>
+<!-- 방문 분석: 측정 ID를 발급받은 뒤 아래 주석을 해제하세요. (운영 가이드 참고)
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
+-->
 </head>
 <body>
 
+<a class="ribbon" id="evRibbon" href="#event" data-track="event_ribbon" hidden>
+  <span class="ribbon-tag" id="evRibbonTag">EVENT</span>
+  <span class="ribbon-txt" id="evRibbonTxt"></span><span class="ribbon-short" id="evRibbonShort"></span>
+  <span class="ribbon-dday" id="evRibbonDday"></span>
+</a>
 <header class="hdr">
   <div class="wrap">
     <a class="logo" href="#top" aria-label="LIFE DIRECTOR 홈">
@@ -410,6 +469,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     </button>
     <nav class="nav" id="nav">
+      <a href="#event" class="nav-ev" id="navEv" hidden>이벤트</a>
       <a href="#program">프로그램</a>
       <a href="#process">상담 과정</a>
       <a href="#facility">시설</a>
@@ -435,7 +495,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
           <a class="btn btn-ghost" href="#price">가격 보기</a>
         </div>
         <dl class="facts">
-          <div><dt>Members</dt><dd>30<small>명 정원</small></dd></div>
+          <div><dt>Gym Members</dt><dd>30<small>명 한정</small></dd></div>
           <div><dt>Lessons</dt><dd>1:1<small>· 2:1</small></dd></div>
           <div><dt>Coaches</dt><dd>3<small>명 전원 국가자격</small></dd></div>
         </dl>
@@ -451,6 +511,39 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
     </div>
   </section>
 
+  <section class="event" id="event" hidden>
+    <div class="wrap">
+      <div class="ev">
+        <div class="ev-copy">
+          <div class="ev-badges"><span class="ev-month" id="evMonth">THIS MONTH</span><span class="ev-limit" id="evLimit"></span></div>
+          <p class="ev-hook" id="evHook"></p>
+          <h2 id="evTitle"></h2>
+          <p class="ev-sub" id="evSub"></p>
+          <ul class="ev-items" id="evItems"></ul>
+          <div class="ev-price">
+            <span class="ev-off" id="evOff"></span>
+            <s id="evOrig"></s>
+            <strong id="evPrice"></strong>
+            <small id="evVat"></small>
+          </div>
+          <div class="ev-timer" aria-live="off">
+            <span class="ev-timer-label">이벤트 종료까지</span>
+            <span class="ev-clock" id="evClock"></span>
+          </div>
+          <div class="ev-cta">
+            <a class="btn ev-btn" href="#trialForm" id="evApply" data-track="event_apply">이벤트 상담 신청</a>
+            <a class="btn ev-btn-ghost" id="evSms" href="sms:01027426218" data-track="event_sms">바로 문자 보내기</a>
+          </div>
+          <p class="ev-note" id="evNote"></p>
+        </div>
+        <a class="ev-flyer" id="evFlyerLink" href="#" target="_blank" rel="noopener" data-track="event_flyer">
+          <img id="evFlyer" src="" alt="" width="1080" height="1080">
+          <span>전단지 크게 보기</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <section class="sec" id="why">
     <div class="wrap">
       <div class="sec-head">
@@ -459,7 +552,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
         <p>회원 수를 늘리기보다 지도의 질을 지키는 쪽을 택했습니다. 운동 피드백과 대화를 가장 중요하게 생각합니다.</p>
       </div>
       <div class="why">
-        <article><span class="k">Small Studio</span><h3>회원 정원 최대 30명</h3><p>붐비지 않는 공간에서 기다림 없이 운동합니다. 사람 많은 곳이 불편했던 분들이 편하게 다니는 센터입니다.</p></article>
+        <article><span class="k">Small Studio</span><h3>헬스 회원권 정원 최대 30명</h3><p>개인 운동 회원권은 30명까지만 받습니다. 붐비지 않는 공간에서 기다림 없이 운동하고, 사람 많은 곳이 불편했던 분들도 편하게 다닙니다.</p></article>
         <article><span class="k">Body Analysis</span><h3>모티피지오 3D 체형 분석</h3><p>전문 체형 분석 기기 모티피지오와 인바디, 상담지로 체형과 목표를 확인하고 개인별 프로그램을 구성합니다.</p></article>
         <article><span class="k">Certified</span><h3>전원 생활스포츠지도사</h3><p>모든 코치가 국가자격을 보유하고 있으며, 건강운동관리사도 함께합니다. 건강을 최우선으로 지도합니다.</p></article>
         <article><span class="k">Balanced Body</span><h3>발란스드바디 기구 필라테스</h3><p>발란스드바디 자격을 보유한 원장이 같은 브랜드의 리포머, 캐딜락, 체어, 바렐로 수업합니다.</p></article>
@@ -646,10 +739,10 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
           <figcaption><b>박도현</b> 대표 트레이너</figcaption>
         </figure>
         <figure class="profile">
-          <a href="assets/profile-heo.jpg" target="_blank" rel="noopener" aria-label="허은빈 대표원장 프로필 크게 보기">
-            <img src="assets/profile-heo.jpg" alt="허은빈 대표원장 트레이너 프로필. Balanced Body(BBU) 자격, 생활체육지도사 2급 보디빌딩, 대한선수퍼포먼스코치, Body1st 체형분석지도자, FMS, H7 체형교정협회, BBU/BONUM 산전 산후 수료, 키즈 필라테스 수료, 슈로스 수료. 現 LIFE DIRECTOR 대표원장 트레이너. 전문 분야: 통증개선, 체형교정, 산전·산후, 여성 바디라인, 키즈 필라테스." loading="lazy" width="794" height="1123">
+          <a href="assets/profile-heo.jpg" target="_blank" rel="noopener" aria-label="허은빈 대표 원장 프로필 크게 보기">
+            <img src="assets/profile-heo.jpg" alt="허은빈 대표 원장 트레이너 프로필. Balanced Body(BBU) 자격, 생활체육지도사 2급 보디빌딩, 대한선수퍼포먼스코치, Body1st 체형분석지도자, FMS, H7 체형교정협회, BBU/BONUM 산전 산후 수료, 키즈 필라테스 수료, 슈로스 수료. 現 LIFE DIRECTOR 대표원장 트레이너. 전문 분야: 통증개선, 체형교정, 산전·산후, 여성 바디라인, 키즈 필라테스." loading="lazy" width="794" height="1123">
           </a>
-          <figcaption><b>허은빈</b> 대표원장</figcaption>
+          <figcaption><b>허은빈</b> 대표 원장</figcaption>
         </figure>
         <figure class="profile">
           <a href="assets/profile-jeong.jpg" target="_blank" rel="noopener" aria-label="정승우 PT 트레이너 프로필 크게 보기">
@@ -794,6 +887,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
             <label><input type="checkbox" id="f-p4" name="prog" value="산전·산후"><span>산전 · 산후</span></label>
             <label><input type="checkbox" id="f-p5" name="prog" value="시니어·키즈"><span>시니어 · 키즈</span></label>
             <label><input type="checkbox" id="f-p6" name="prog" value="헬스 회원권"><span>헬스 회원권</span></label>
+            <label id="evChipWrap" hidden><input type="checkbox" id="f-ev" name="prog" value=""><span id="evChip"></span></label>
           </div>
         </fieldset>
         <div class="field">
@@ -918,6 +1012,78 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
     });
   });
 
+
+  /* ==========================================================
+     이달의 이벤트 — 매달 이 부분만 바꾸면 됩니다.
+     end 날짜가 지나면 상단 띠, 메뉴, 이벤트 섹션이 자동으로 숨겨집니다.
+     ========================================================== */
+  var EVENT = {
+    id: '2026-10-back-care',
+    month: '10월 이벤트',
+    end: '2026-10-31T23:59:59+09:00',
+    ribbon: '10월 한정 · 1:1 PT 6회 + 헬스 1개월 + 3D 체형분석 330,000원',
+    ribbonShort: '10월 한정 PT 패키지 330,000원',
+    hook: '운동은 해야 하는데, 오래 앉아 있거나 아침에 일어날 때 허리가 불편하다면',
+    title: '허리가 자주 <em>뻐근하신가요?</em>',
+    sub: '무작정 운동하기 전에, 내 몸의 문제부터 정확히 확인하세요. 모티피지오 3D 체형분석으로 원인을 찾고 1:1 맞춤 PT로 바로잡습니다.',
+    items: ['3D 체형분석', '1:1 PT 6회', '헬스 1개월'],
+    price: 330000, original: 520000, vat: '부가세 포함',
+    limit: '선착순 모집',
+    note: '원하는 시간대에 맞춰 수업할 수 있습니다. 이벤트 상세 조건은 상담 시 안내드립니다.',
+    flyer: 'assets/event-2026-10.jpg',
+    flyerAlt: '10월 이벤트 전단지. 허리가 자주 뻐근하신가요? 1:1 PT 6회, 헬스 1개월, 3D 체형분석 330,000원, 정상가 520,000원 대비 약 36% 할인'
+  };
+  (function () {
+    var end = new Date(EVENT.end), $ = function (id) { return document.getElementById(id); };
+    if (!(end > new Date())) return;
+    var off = Math.floor((1 - EVENT.price / EVENT.original) * 100);
+    var label = EVENT.month + ' (' + EVENT.items.join(' + ') + ')';
+    ['evRibbon', 'navEv', 'event', 'evChipWrap'].forEach(function (id) { $(id).hidden = false; });
+    $('evRibbonTxt').textContent = EVENT.ribbon; $('evRibbonShort').textContent = EVENT.ribbonShort || EVENT.ribbon;
+    $('evMonth').textContent = 'THIS MONTH · ' + EVENT.month;
+    $('evLimit').textContent = EVENT.limit || '';
+    $('evHook').textContent = EVENT.hook;
+    $('evTitle').innerHTML = EVENT.title;
+    $('evSub').textContent = EVENT.sub;
+    $('evItems').innerHTML = EVENT.items.map(function (t, i) { return (i ? '<li class="plus" aria-hidden="true">+</li>' : '') + '<li>' + t + '</li>'; }).join('');
+    $('evOff').textContent = off + '% 할인';
+    $('evOrig').textContent = EVENT.original.toLocaleString('ko-KR') + '원';
+    $('evPrice').textContent = EVENT.price.toLocaleString('ko-KR') + '원';
+    $('evVat').textContent = EVENT.vat;
+    $('evNote').textContent = EVENT.note;
+    $('evFlyer').src = EVENT.flyer; $('evFlyer').alt = EVENT.flyerAlt; $('evFlyerLink').href = EVENT.flyer;
+    $('evChip').textContent = EVENT.month; $('f-ev').value = label;
+    $('evSms').href = 'sms:01027426218?&body=' + encodeURIComponent('[라이프디렉터 ' + label + ' 상담 신청]\n이름:\n희망 시간대:');
+    $('evApply').addEventListener('click', function () { $('f-ev').checked = true; });
+    function tick() {
+      var ms = end - new Date();
+      if (ms <= 0) { $('event').hidden = $('evRibbon').hidden = $('navEv').hidden = true; return; }
+      var d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60, sec = Math.floor(ms / 1e3) % 60;
+      var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+      $('evClock').innerHTML = '<span>' + d + '<small>일</small></span><span>' + pad(h) + '<small>시간</small></span><span>' + pad(m) + '<small>분</small></span><span>' + pad(sec) + '<small>초</small></span>';
+      $('evRibbonDday').textContent = d === 0 ? 'D-DAY' : 'D-' + d;
+    }
+    tick(); setInterval(tick, 1000);
+  })();
+
+  /* ==========================================================
+     방문 분석 — 구글 애널리틱스(GA4) / 네이버 애널리틱스가 연결되면
+     전화 · 문자 · 상담 신청 · 이벤트 클릭이 '전환'으로 기록됩니다.
+     ========================================================== */
+  function track(name, params) {
+    try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {}
+  }
+  window.ldTrack = track;
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a, button'); if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (a.dataset.track) track(a.dataset.track);
+    else if (href.indexOf('tel:') === 0) track('call_click');
+    else if (href.indexOf('sms:') === 0) track('sms_click');
+    else if (/blog\.naver|instagram/.test(href)) track('social_click', { link: href });
+    else if (a.closest('#pTabs')) track('price_tab', { tab: a.dataset.k });
+  });
+
   // 오늘 운영 상태 (공휴일은 자동 반영되지 않음)
   (function () {
     var el = document.getElementById('todayStatus'); if (!el) return;
@@ -954,6 +1120,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
       function fallback() { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
       try { navigator.clipboard.writeText(body).then(function () { b.textContent = '복사됨'; }, fallback); } catch (err) { fallback(); }
     });
+    track('consult_submit', { programs: progs.join(', ') });
     window.location.href = href;
   });
 })();
