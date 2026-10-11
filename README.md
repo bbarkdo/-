@@ -1,5 +1,7 @@
 # FORMA 헬스&필라테스 (천안 불당동) 홈페이지
 
+공개 주소: https://lifedirector.kr (GitHub Pages, `CNAME` 파일로 연결)
+
 정적 단일 페이지 사이트입니다. `index.html`을 브라우저로 열면 바로 확인할 수 있습니다.
 
 - 센터명 FORMA는 가칭입니다.
@@ -15,7 +17,7 @@
 - `items`, `price`, `original`, `vat`, `limit`, `note`: 구성, 가격, 정상가, 부가세 표기, 배지, 안내 문구
 - `flyer`, `flyerAlt`: 전단지 이미지 경로(`assets/`에 저장)와 이미지 설명
 
-전단지 QR은 `https://(도메인)/?utm_source=flyer&utm_campaign=(월)#event` 처럼 만들면 이벤트 섹션으로 바로 이동하고, 방문 분석에서 전단지 유입을 따로 볼 수 있습니다.
+전단지 QR은 `https://lifedirector.kr/?utm_source=flyer&utm_campaign=(월)#event` 처럼 만들면 이벤트 섹션으로 바로 이동하고, 방문 분석에서 전단지 유입을 따로 볼 수 있습니다.
 
 ## 방문 분석
 
