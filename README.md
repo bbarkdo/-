@@ -11,11 +11,15 @@
 
 - `end`: 종료 일시. 이 시각이 지나면 상단 띠, 메뉴의 '이벤트', 이벤트 섹션이 자동으로 숨겨집니다.
 - `ribbon` / `ribbonShort`: 상단 띠 문구 (PC / 모바일)
-- `title`, `hook`, `sub`: 이벤트 섹션 제목과 설명. 강조할 단어는 `<em>…</em>`으로 감쌉니다.
-- `items`, `price`, `original`, `vat`, `limit`, `note`: 구성, 가격, 정상가, 부가세 표기, 배지, 안내 문구
-- `flyer`, `flyerAlt`: 전단지 이미지 경로(`assets/`에 저장)와 이미지 설명
+- `badge`, `hook`, `title`, `sub`: 배지, 윗줄, 제목, 설명. 강조할 단어는 `<em>…</em>`으로 감쌉니다.
+- `offers`: 상품 목록. 상품마다 `name`(이름), `sessions`(횟수), `price`(이벤트 총액), `regularPer`(정가 회당 단가). 회당 금액과 할인율은 자동 계산됩니다(할인율은 내림).
+- `vat`, `basis`: 부가세 표기, 정가 기준 안내
+- `items`: 혜택 칩, `limit`: 빨간 배지(예: '선착순 · 2자리 남음', 비우면 숨김), `note`: 하단 안내
+- `flyer`, `flyerAlt`: 전단지 이미지 경로(`assets/`)와 설명
+- `theme`: 전단지에 맞춘 색. 비우면 기본 블랙 + 레드
 
-전단지 QR은 `https://lifedirector.kr/?utm_source=flyer&utm_campaign=(월)#event` 처럼 만들면 이벤트 섹션으로 바로 이동하고, 방문 분석에서 전단지 유입을 따로 볼 수 있습니다.
+전단지 QR이 `?utm_source=flyer`로 들어오면 상담 신청서에 이벤트 항목이 자동으로 체크됩니다.
+예: `https://lifedirector.kr/?utm_source=flyer#trialForm` (10월 신규 회원 전단지 QR)
 
 ## 방문 분석
 
