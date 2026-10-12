@@ -21,3 +21,10 @@
 
 GA4 측정 ID `G-V7K4CBTXKR`가 `</head>` 바로 위에 연결되어 있습니다.
 전화(`call_click`), 문자(`sms_click`), 상담 신청(`consult_submit`), 이벤트 클릭(`event_*`)이 자동 기록됩니다.
+
+## 상담 신청 방식
+
+- 휴대폰: 문자 앱이 열리고 신청 내용이 자동 입력됩니다.
+- PC: `WEB3FORMS_KEY`가 비어 있으면 QR 코드가 나오고, 휴대폰으로 찍으면 같은 문자가 작성됩니다.
+  `index.html`의 `var WEB3FORMS_KEY = '';`에 web3forms.com Access Key를 넣으면 PC에서 바로 접수되고 이메일로 알림이 옵니다. 접수에 실패하면 자동으로 QR 방식으로 바뀝니다.
+- QR 생성 라이브러리: `assets/vendor/qrcode.js` (qrcode-generator 1.4.4, MIT)
