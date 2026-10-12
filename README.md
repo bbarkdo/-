@@ -19,7 +19,7 @@
 
 ## 방문 분석
 
-GA4 측정 ID `G-V7K4CBTXKR`가 `</head>` 바로 위에, 네이버 애널리틱스(`125fd65eb3cd030`)가 `</body>` 바로 위에 연결되어 있습니다.
+GA4 측정 ID `G-V7K4CBTXKR`가 `</head>` 바로 위에, 네이버 애널리틱스(`125fd65eb3cd030`)가 `</body>` 바로 위에, Microsoft Clarity(`ywd99ymwf5`)가 GA4 바로 아래에 연결되어 있습니다.
 전화(`call_click`), 문자(`sms_click`), 상담 신청(`consult_submit`), 이벤트 클릭(`event_*`)이 자동 기록됩니다.
 
 ## 상담 신청 방식
