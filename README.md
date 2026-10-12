@@ -19,5 +19,5 @@
 
 ## 방문 분석
 
-`</head>` 바로 위 주석에 있는 `G-XXXXXXXXXX`를 GA4 측정 ID로 바꾸고 주석을 해제하면 됩니다.
+GA4 측정 ID `G-V7K4CBTXKR`가 `</head>` 바로 위에 연결되어 있습니다.
 전화(`call_click`), 문자(`sms_click`), 상담 신청(`consult_submit`), 이벤트 클릭(`event_*`)이 자동 기록됩니다.
