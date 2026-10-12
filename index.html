@@ -479,6 +479,8 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 .ftr .wrap { display: grid; gap: 18px; }
 .ftr address { font-style: normal; line-height: 1.9; }
 .ftr .links { display: flex; gap: 16px; flex-wrap: wrap; }
+.ftr .links a.privacy { font-weight: 700; color: var(--ink); }
+.agree a { color: var(--accent); }
 
 /* Mobile quick bar */
 .quick {
@@ -949,7 +951,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
           </select>
         </div>
         <div class="field"><label for="f-msg">목표나 불편한 부위 (선택)</label><textarea id="f-msg" name="msg" placeholder="예: 허리가 자주 아파요 / 출산 후 6개월이에요 / 3개월 안에 5kg 감량하고 싶어요"></textarea></div>
-        <label class="agree"><input type="checkbox" id="f-agree" required>상담 연락을 위해 이름 · 연락처 · 상담 내용을 수집 · 이용하는 데 동의합니다. (상담 완료 후 파기)</label>
+        <label class="agree"><input type="checkbox" id="f-agree" required>상담 연락을 위해 이름 · 연락처 · 상담 내용을 수집 · 이용하는 데 동의합니다. (상담 완료 후 파기 · <a href="privacy.html" target="_blank" rel="noopener">자세히</a>)</label>
         <button class="btn btn-primary" type="submit">문자로 상담 신청하기</button>
         <div class="form-done" id="formMsg" hidden></div>
       </form>
@@ -968,7 +970,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
       라이프디렉터 · 대표 박도현 · 사업자등록번호 843-09-02029<br>
       충남 천안시 서북구 불당28길 4-1, 1층 · 010-2742-6218
     </address>
-    <div class="links"><a href="https://blog.naver.com/lifedirector_owner" target="_blank" rel="noopener">네이버 블로그</a><a href="https://instagram.com/lifedirector_official" target="_blank" rel="noopener">인스타그램</a></div>
+    <div class="links"><a class="privacy" href="privacy.html">개인정보처리방침</a><a href="https://blog.naver.com/lifedirector_owner" target="_blank" rel="noopener">네이버 블로그</a><a href="https://instagram.com/lifedirector_official" target="_blank" rel="noopener">인스타그램</a></div>
     <p>© 2026 LIFE DIRECTOR. All rights reserved.</p>
   </div>
 </footer>
