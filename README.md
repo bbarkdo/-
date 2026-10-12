@@ -27,4 +27,5 @@ GA4 측정 ID `G-V7K4CBTXKR`가 `</head>` 바로 위에, 네이버 애널리틱�
 - 휴대폰: 문자 앱이 열리고 신청 내용이 자동 입력됩니다.
 - PC: `WEB3FORMS_KEY`가 비어 있으면 QR 코드가 나오고, 휴대폰으로 찍으면 같은 문자가 작성됩니다.
   `index.html`의 `var WEB3FORMS_KEY = '';`에 web3forms.com Access Key를 넣으면 PC에서 바로 접수되고 이메일로 알림이 옵니다. 접수에 실패하면 자동으로 QR 방식으로 바뀝니다.
+- 개인정보처리방침: `privacy.html` (하단 링크, 신청서 동의 문구에서 연결)
 - QR 생성 라이브러리: `assets/vendor/qrcode.js` (qrcode-generator 1.4.4, MIT)
