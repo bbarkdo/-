@@ -152,30 +152,40 @@
       return !busyClass && !booked;
     }).length;
   }
+  // 시간대 카드: 평일 오전 / 평일 저녁 / 토요일. 빈 시간을 하나하나 늘어놓지 않고,
+  // 예약이 찬 시간만 보여주고 찬 비율로 '예약 가능 · 인기 시간대 · 마감 임박'을 표시
+  var BANDS = [
+    { key: 'am', icon: '🌅', name: '평일 오전', days: ['월', '화', '수', '목', '금'], hours: D.privateHours.weekday.filter(function (h) { return h < 14; }), tag: '출근 전 · 오전 시간에 여유 있게' },
+    { key: 'pm', icon: '🌙', name: '평일 저녁', days: ['월', '화', '수', '목', '금'], hours: D.privateHours.weekday.filter(function (h) { return h > 18; }), tag: '퇴근 후 하루 마무리 운동' },
+    { key: 'sat', icon: '🗓️', name: '토요일', days: ['토'], hours: D.privateHours.sat, tag: '주말 오전 · 그 외 시간은 강사와 협의', note: '토요일은 정규반과 개인 · 듀엣 레슨이 함께 운영돼요.' }
+  ];
   function renderAdult() {
-    var rows = union(D.privateHours.weekday, D.privateHours.sat), h = '<thead><tr><th></th>' + DAYS.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr></thead><tbody>';
-    rows.forEach(function (hr, i) {
-      if (i && hr - rows[i - 1] > 1) h += '<tr class="ad-gap"><td colspan="' + (DAYS.length + 1) + '">' + pad(rows[i - 1] + 1) + '~' + pad(hr - 1) + '시는 어린이 정규반 시간이에요</td></tr>';
-      h += '<tr><td class="time">' + pad(hr) + '<small>시</small></td>' + DAYS.map(function (d) {
-        var ok = (d === '토' ? D.privateHours.sat : D.privateHours.weekday).indexOf(hr) >= 0;
-        if (!ok) return '<td class="ad-na"><span>' + (d === '토' ? '협의' : '') + '</span></td>';
-        var n = freeRooms(d, hr);
-        return '<td><button type="button" class="ad-cell ad-' + n + '" data-d="' + d + '" data-h="' + hr + '"' + (n ? '' : ' disabled') +
-          ' aria-label="' + d + '요일 ' + hr + '시 ' + (n ? '예약 가능, 빈 수조 ' + n + '곳' : '예약 마감') + '">' + (n ? '가능<small>' + n + '곳</small>' : '마감') + '</button></td>';
-      }).join('') + '</tr>';
-    });
-    $('adGrid').innerHTML = h + '</tbody>';
+    $('adBands').innerHTML = BANDS.map(function (b) {
+      var full = {}, nFull = 0, total = 0;
+      b.days.forEach(function (d) { b.hours.forEach(function (h) { total++; if (!freeRooms(d, h)) { nFull++; (full[d] = full[d] || []).push(h); } }); });
+      var r = nFull / total, st = r >= 0.35 ? ['hot', '마감 임박'] : r >= 0.15 ? ['busy', '인기 시간대'] : ['ok', '예약 가능'];
+      var fullTxt = Object.keys(full).map(function (d) { return '<span class="ad-chip">' + d + ' ' + full[d].join('·') + '시</span>'; }).join('');
+      return '<article class="ad-band ad-' + b.key + '">' +
+        '<div class="ad-top"><span class="ad-ico" aria-hidden="true">' + b.icon + '</span><span class="ad-st ad-st-' + st[0] + '">' + st[1] + '</span></div>' +
+        '<h3>' + b.name + '</h3>' +
+        '<p class="ad-time">' + pad(b.hours[0]) + ':00 ~ ' + pad(b.hours[b.hours.length - 1]) + ':00 <small>시작</small></p>' +
+        '<p class="ad-tag">' + b.tag + '</p>' +
+        (b.note ? '<p class="ad-note">' + b.note + '</p>' : '') +
+        '<div class="ad-full">' + (nFull ? '<b>예약이 찬 시간</b><div class="ad-chips">' + fullTxt + '</div>' : '<b>원하는 요일 · 시간을 골라 예약할 수 있어요</b>') + '</div>' +
+        '<button type="button" class="btn ad-btn" data-band="' + b.key + '">이 시간대로 상담 신청</button>' +
+        '</article>';
+    }).join('');
   }
-  $('adUpdated').textContent = fmtDate(D.updated) + ' 기준';
-  $('adultHours2').innerHTML = info.adultHours.map(function (x) { return '<li><b>' + esc(x[0]) + '</b> ' + x.slice(1).map(esc).join(' · ') + '</li>'; }).join('');
-  $('adGrid').addEventListener('click', function (e) {
-    var b = e.target.closest('.ad-cell'); if (!b || b.disabled) return;
+  $('adUpdated').textContent = fmtDate(D.updated) + ' 기준 예약 현황';
+  $('adBands').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-band]'); if (!btn) return;
+    var b = BANDS.filter(function (x) { return x.key === btn.dataset.band; })[0];
     setProg(who === 'kids' ? 'kids' : 'adult', '개인');
-    addWish({ days: [b.dataset.d], time: hh(+b.dataset.h), freq: 1, label: '개인레슨' });
+    addWish({ text: '개인레슨 · ' + b.name + ' (' + pad(b.hours[0]) + '~' + pad(b.hours[b.hours.length - 1]) + '시 시작) 희망' });
     $('consult').scrollIntoView({ behavior: 'smooth' });
   });
   renderAdult();
-  var SUB = { kids: $('ttSub').innerHTML, adult: '비어 있는 시간을 누르면 상담 신청서에 바로 담겨요. 성인 레슨과 키즈 개인 · 듀엣 · 트리오 레슨의 예약 가능 시간이에요.' };
+  var SUB = { kids: $('ttSub').innerHTML, adult: '성인 레슨과 키즈 개인 · 듀엣 · 트리오 레슨은 아래 시간대 중 원하는 요일 · 시간에 예약해요. 시간대를 고르면 상담 신청서에 바로 담겨요.' };
   $('ttMode').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     var m = b.dataset.mode;

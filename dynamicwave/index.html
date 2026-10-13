@@ -300,31 +300,14 @@
       <p class="tt-caution">⚠️ 시간표에 자리가 있어도 모두 바로 들어갈 수 있는 것은 아니에요. 최대한 원하시는 시간에 맞춰 드리지만, 현장 상담 후 반 친구들과 실력 차이가 많이 나면 해당 반 배정이 어려울 수 있어요. 시간표와 여석은 주기적으로 업데이트되며, 정확한 확정은 상담 시 안내드립니다.</p>
       </div>
 
-      <!-- 성인 · 개인레슨: 수업 시작 가능한 시간과 비어 있는 수조 수 -->
+      <!-- 성인 · 개인레슨: 시간대별 카드 (예약 현황은 data.js의 privateBooked로 계산) -->
       <div id="ttAdultPane" hidden>
         <div class="ad-intro">
-          <p><b>성인 레슨</b>은 개인 1:1 · 듀엣 1:2 · 트리오 1:3으로 진행해요. 원하는 요일과 시간을 골라 정해진 시간에 꾸준히 배워요.</p>
-          <p class="ad-intro-sub">키즈 개인 · 듀엣 · 트리오도 같은 시간대에 예약해요. 표의 숫자는 그 시간에 비어 있는 수조 수예요.</p>
+          <p><b>성인 레슨</b>은 개인 1:1 · 듀엣 1:2 · 트리오 1:3으로, 원하는 요일과 시간을 정해 꾸준히 배워요. 키즈 개인 · 듀엣 · 트리오도 같은 시간대에 예약해요.</p>
         </div>
-        <div class="tt-legend" aria-label="표시 안내">
-          <span class="lg ad-l2"><i>가능</i>두 수조 모두 비어 있음</span>
-          <span class="lg ad-l1"><i>가능</i>한 수조 비어 있음</span>
-          <span class="lg ad-l0"><i>마감</i>예약 완료</span>
-          <span class="tt-updated" id="adUpdated"></span>
-        </div>
-        <div class="ad-wrap"><table class="ad-grid" id="adGrid"></table></div>
-        <div class="tt-info">
-          <div class="ti ti-adult">
-            <b>🕘 레슨 시작 가능 시간</b>
-            <ul id="adultHours2"></ul>
-            <p>14~18시는 어린이 정규반 시간이라 개인레슨을 잡지 않아요.</p>
-          </div>
-          <div class="ti ti-free">
-            <b>🏊 자유수영도 가능해요</b>
-            <p>회원 20,000원 · 비회원 30,000원 (1인 50분). 레슨이 없는 시간에 이용할 수 있어 미리 문의해 주세요.</p>
-          </div>
-        </div>
-        <p class="tt-caution">⚠️ 표시된 빈 시간은 참고용이에요. 강사 일정에 따라 달라질 수 있어 상담 후 확정됩니다. 원하시는 시간을 2~3개 적어주시면 더 빨리 잡아드려요.</p>
+        <div class="ad-bands" id="adBands"></div>
+        <p class="ad-foot"><span id="adUpdated"></span> · 14~18시는 어린이 정규반 시간이에요 · 🏊 자유수영도 가능해요 (회원 20,000원 · 비회원 30,000원, 1인 50분)</p>
+        <p class="tt-caution">⚠️ 예약 현황은 참고용이에요. 강사 일정에 따라 달라질 수 있어 상담 후 확정됩니다. 원하시는 요일 · 시간을 2~3개 적어주시면 더 빨리 잡아드려요.</p>
       </div>
     </div>
   </section>
