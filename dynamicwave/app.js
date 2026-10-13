@@ -2,7 +2,12 @@
   'use strict';
   var D = window.DW, info = D.info;
   var DAYS = ['월', '화', '수', '목', '금', '토'];
-  var KIND = { '5세': { cls: 'five', name: '5세 특별반' }, '유아': { cls: 'baby', name: '유아 정규반' }, '초등': { cls: 'elem', name: '초등 정규반' } };
+  var KIND = {
+    '5세': { cls: 'five', name: '5세 특별반', short: '5세반' },
+    '유아': { cls: 'baby', name: '유아 정규반', short: '유아반' },
+    '초등': { cls: 'elem', name: '초등 정규반', short: '초등반' },
+    '신규': { cls: 'new', name: '유아·초등 신규반', short: '유아·초등' }
+  };
   var $ = function (id) { return document.getElementById(id); };
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -15,7 +20,6 @@
   function seat(cap, cur) {
     var left = cap - cur;
     if (left <= 0) return { k: 'full', left: 0, txt: '마감 · 대기 접수' };
-    if (cur === 0) return { k: 'new', left: left, txt: '신규 모집 · ' + left + '자리' };
     if (left === 1) return { k: 'few', left: 1, txt: '1자리 남음' };
     return { k: 'open', left: left, txt: left + '자리 남음' };
   }
@@ -36,6 +40,10 @@
   if (info.kakao) { $('kakaoBtn').href = info.kakao; $('kakaoBtn').hidden = false; }
   if (info.instagram) $('iInsta').href = info.instagram; else $('iInsta').hidden = true;
   if (info.blog) $('iBlog').href = info.blog; else $('iBlog').hidden = true;
+  if (info.kakao) $('iKakao').href = info.kakao; else $('iKakao').hidden = true;
+  $('adultHours').innerHTML = info.adultHours.map(function (h) {
+    return '<li><b>' + esc(h[0]) + '</b> ' + h.slice(1).map(esc).join(' · ') + '</li>';
+  }).join('');
   var q = encodeURIComponent(info.address.split(',')[0]);
   $('mapFrame').src = 'https://maps.google.com/maps?q=' + q + '&hl=ko&z=17&output=embed';
   $('mapGo').href = 'https://map.naver.com/p/search/' + q;
@@ -51,45 +59,58 @@
   });
   nav.addEventListener('click', function (e) { if (e.target.tagName === 'A') { nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', false); } });
 
-  /* ---------- 시간표 ---------- */
+  /* ---------- 시간표 (수조별 좌/우) ---------- */
+  var ROOMS = [1, 2];
   var tt = { f: 'all', open: false, day: DAYS[(new Date().getDay() + 6) % 7] };
   if (!tt.day) tt.day = '월';
   // [요일, 시간, 수조, 반, 단계, 인원, (정원)] → 객체
   var CL = D.classes.map(function (r, i) {
     var k = KIND[r[3]], cap = r[6] || D.cap[r[3]];
-    return { id: i, day: r[0], time: r[1], room: r[2], kind: r[3], cls: k.cls, name: k.name, level: r[4], cap: cap, cur: r[5], s: seat(cap, r[5]) };
+    var s = r[3] === '신규' ? { k: 'new', left: cap, txt: D.newMin + '인부터 개설' } : seat(cap, r[5]);
+    return { id: i, day: r[0], time: r[1], room: r[2], kind: r[3], cls: k.cls, name: k.name, short: k.short, level: r[4], s: s };
   });
   $('ttUpdated').textContent = fmtDate(D.updated) + ' 기준 여석';
+  var TIMES = CL.map(function (c) { return c.time; }).filter(function (t, i, a) { return a.indexOf(t) === i; }).sort();
+  var STAMP = { full: '마감', few: '임박', open: '여유', new: '신규' };
 
-  function visible(c) { return (tt.f === 'all' || c.kind === tt.f) && (!tt.open || c.s.k !== 'full'); }
-  function sub(c) { return (c.level ? c.level + ' · ' : '') + c.room + '호실'; }
-  function clsBtn(c, mobile) {
-    return '<button type="button" class="cls t-' + c.cls + (c.s.k === 'full' ? ' is-full' : '') + '" data-id="' + c.id + '" ' +
-      'aria-label="' + esc(c.day + '요일 ' + c.time + ' ' + c.name + ' ' + sub(c) + ', ' + c.s.txt + ', 누르면 상담 신청서에 추가') + '">' +
-      (mobile ? '<span class="tm">' + c.time + '</span><span><span class="cn">' + esc(c.name) + '</span><span class="cl">' + esc(sub(c)) + '</span></span>' + badge(c.s)
-              : '<span class="cn">' + esc(c.name) + '</span><span class="cl">' + esc(sub(c)) + '</span>' + badge(c.s)) +
-      '</button>';
+  function visible(c) {
+    var kindOk = tt.f === 'all' || c.kind === tt.f || (c.kind === '신규' && tt.f !== '5세');
+    return kindOk && (!tt.open || c.s.k !== 'full');
   }
-  function byTime(a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : a.room - b.room; }
+  function roomName(n) { var r = D.rooms[n]; return r.icon + ' ' + r.name; }
+  function clsBtn(c) {
+    var seatTxt = c.s.k === 'full' ? '대기 접수' : c.s.k === 'few' ? '1자리 남음' : c.s.k === 'new' ? c.s.txt : c.s.left + '자리 남음';
+    return '<button type="button" class="cls t-' + c.cls + ' st-' + c.s.k + '" data-id="' + c.id + '" ' +
+      'aria-label="' + esc(D.rooms[c.room].name + ' ' + c.day + '요일 ' + c.time + ' ' + c.name + (c.level ? ' ' + c.level : '') + ', ' + (c.s.k === 'full' ? '마감, 대기 접수 가능' : c.s.k === 'new' ? '신규 개설 가능, ' + c.s.txt : seatTxt) + ', 누르면 상담 신청서에 추가') + '">' +
+      '<span class="stamp">' + STAMP[c.s.k] + '</span>' +
+      '<span class="cn">' + esc(c.short) + '</span>' +
+      (c.level ? '<span class="cl">' + esc(c.level) + '</span>' : '') +
+      '<span class="cs">' + seatTxt + '</span></button>';
+  }
+  function cellFor(list, room, day, t) {
+    return list.filter(function (c) { return c.room === room && c.day === day && c.time === t; }).map(clsBtn).join('');
+  }
   function renderTT() {
     var list = CL.filter(visible);
-    var times = CL.map(function (c) { return c.time; }).filter(function (t, i, a) { return a.indexOf(t) === i; }).sort();
-    // PC 표
-    var h = '<thead><tr><th>시간</th>' + DAYS.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr></thead><tbody>';
-    times.forEach(function (t) {
-      var row = DAYS.map(function (d) {
-        return '<td>' + list.filter(function (c) { return c.time === t && c.day === d; }).sort(byTime).map(function (c) { return clsBtn(c); }).join('') + '</td>';
-      }).join('');
-      h += '<tr><td class="time">' + t + '</td>' + row + '</tr>';
-    });
-    $('ttGrid').innerHTML = h + '</tbody>';
-    // 모바일 탭
+    // PC: 수조마다 주간 표, 좌/우 배치
+    $('ttPools').innerHTML = ROOMS.map(function (room) {
+      var h = '<div class="pool pool-' + room + '"><div class="pool-head"><b>' + roomName(room) + '</b><small>' + D.rooms[room].sub + '</small></div>' +
+        '<div class="pool-scroll"><table class="tt-grid"><thead><tr><th></th>' + DAYS.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr></thead><tbody>';
+      TIMES.forEach(function (t) {
+        h += '<tr><td class="time">' + t.replace(':00', '') + '<small>시</small></td>' + DAYS.map(function (d) { return '<td>' + cellFor(list, room, d, t) + '</td>'; }).join('') + '</tr>';
+      });
+      return h + '</tbody></table></div></div>';
+    }).join('');
+    // 모바일: 요일 탭 + 수조 2열
     $('ttDays').innerHTML = DAYS.map(function (d) {
       var n = list.filter(function (c) { return c.day === d && c.s.k !== 'full'; }).length;
       return '<button type="button" role="tab" aria-selected="' + (d === tt.day) + '" data-d="' + d + '">' + d + '<small>' + (n ? '빈자리 ' + n : '&nbsp;') + '</small></button>';
     }).join('');
-    var dl = list.filter(function (c) { return c.day === tt.day; }).sort(byTime);
-    $('ttList').innerHTML = dl.length ? dl.map(function (c) { return clsBtn(c, true); }).join('') : '<p class="tt-empty">조건에 맞는 수업이 없어요. 대기 접수로 원하는 시간을 남겨주세요!</p>';
+    var times = TIMES.filter(function (t) { return list.some(function (c) { return c.day === tt.day && c.time === t; }); });
+    $('ttList').innerHTML = times.length
+      ? '<table class="tt-day"><thead><tr><th></th>' + ROOMS.map(function (r) { return '<th class="ph-' + r + '">' + roomName(r) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        times.map(function (t) { return '<tr><td class="time">' + t.replace(':00', '') + '<small>시</small></td>' + ROOMS.map(function (r) { return '<td>' + cellFor(list, r, tt.day, t) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>'
+      : '<p class="tt-empty">조건에 맞는 수업이 없어요. 대기 접수로 원하는 시간을 남겨주세요!</p>';
     markPicked();
   }
   $('ttFilter').addEventListener('click', function (e) {
@@ -106,7 +127,8 @@
     setWho('kids');
     var cb = $('progKids').querySelector('input[value="' + (c.kind === '5세' ? '5세 특별 정규반' : '키즈정규반') + '"]');
     cb.checked = true; cb.dispatchEvent(new Event('change', { bubbles: true }));
-    addWish({ days: [c.day], time: c.time, freq: 1, label: c.name + (c.level ? '(' + c.level + ')' : ''), wait: c.s.k === 'full', cid: c.id });
+    addWish({ days: [c.day], time: c.time, freq: 1, label: D.rooms[c.room].name + ' ' + c.name + (c.level ? '(' + c.level + ')' : ''),
+      wait: c.s.k === 'full', isNew: c.s.k === 'new', cid: c.id });
     $('consult').scrollIntoView({ behavior: 'smooth' });
   });
   renderTT();
@@ -177,13 +199,6 @@
   $('pNotes').innerHTML = D.priceNotes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('');
   renderPrice();
 
-  /* ---------- 갤러리: 사진이 있으면 자동 교체 ---------- */
-  [].forEach.call(document.querySelectorAll('.ph[data-src]'), function (el) {
-    var img = new Image();
-    img.onload = function () { el.style.backgroundImage = 'url("' + el.dataset.src + '")'; el.classList.add('has-img'); };
-    img.src = el.dataset.src;
-  });
-
   /* ==========================================================
      대기 접수 · 상담 신청
      - 휴대폰: 문자 앱을 열고 서식에 맞춘 내용을 자동 입력
@@ -229,7 +244,7 @@
     l.innerHTML = wishes.map(function (w, i) {
       var freq = w.text ? '' : '<select class="freq" data-i="' + i + '" aria-label="주 수업 횟수">' +
         [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === w.freq ? ' selected' : '') + '>주 ' + n + '회</option>'; }).join('') + '</select>';
-      return '<li><span class="wl">' + (i + 1) + '순위 · ' + esc(wishText(w)) + (w.wait ? ' <small>(대기)</small>' : '') + '</span>' + freq + '<button type="button" class="x" data-i="' + i + '" aria-label="삭제">×</button></li>';
+      return '<li><span class="wl">' + (i + 1) + '순위 · ' + esc(wishText(w)) + (w.wait ? ' <small>(대기)</small>' : w.isNew ? ' <small>(신규반)</small>' : '') + '</span>' + freq + '<button type="button" class="x" data-i="' + i + '" aria-label="삭제">×</button></li>';
     }).join('');
     markPicked();
   }
@@ -255,7 +270,7 @@
 
   function buildBody() {
     var p = progs().join(', ') || '상담 후 결정';
-    var w = wishes.length ? wishes.map(function (x) { return '\n - ' + wishText(x) + (x.text ? '' : ' 주 ' + x.freq + '회') + (x.wait ? ' (대기 접수)' : ''); }).join('') : ' 상담 후 결정';
+    var w = wishes.length ? wishes.map(function (x) { return '\n - ' + wishText(x) + (x.text ? '' : ' 주 ' + x.freq + '회') + (x.wait ? ' (대기 접수)' : x.isNew ? ' (신규반 · 2인 이상 개설)' : ''); }).join('') : ' 상담 후 결정';
     var memo = val('f-memo') || '없음';
     if (who === 'kids') {
       var shuttle = radio('shuttle') === '이용' ? '이용 (픽업 장소: ' + (val('k-pickup') || '상담 시 안내') + ')' : '미이용';
