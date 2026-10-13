@@ -40,6 +40,8 @@
   }).join('');
   $('fInfo').textContent = info.name + ' · ' + info.address + ' · ' + info.tel;
   if (info.kakao) { $('kakaoBtn').href = info.kakao; $('kakaoBtn').hidden = false; }
+  [].forEach.call(document.querySelectorAll('[data-tel]'), function (x) { x.href = telHref; });
+  [].forEach.call(document.querySelectorAll('[data-kakao]'), function (x) { if (info.kakao) x.href = info.kakao; else x.hidden = true; });
   if (info.instagram) $('iInsta').href = info.instagram; else $('iInsta').hidden = true;
   if (info.blog) $('iBlog').href = info.blog; else $('iBlog').hidden = true;
   if (info.kakao) $('iKakao').href = info.kakao; else $('iKakao').hidden = true;
@@ -137,7 +139,8 @@
     var g = childGroup();
     if (g && c.kind !== '신규' && !classFits(c.kind, g)) {
       $('consult').scrollIntoView({ behavior: 'smooth' });
-      return showErr('이 수업은 ' + c.name + '이에요. 입력한 생년월일 기준으로는 ' + GROUP[g].fit + ' 대상이라 신청할 수 없어요.');
+      return showErr(g === 'young' ? '만 48개월 미만은 정규반 신청이 어려워요. 개인 레슨으로 신청하시거나 수영장으로 문의해 주세요.'
+        : '이 수업은 ' + c.name + '이에요. 입력한 생년월일 기준으로는 ' + GROUP[g].fit + ' 대상이라 신청할 수 없어요.');
     }
     setProg('kids', c.kind === '5세' ? '5세 특별 정규반' : '키즈정규반');
     addWish({ days: [c.day], time: c.time, freq: 1, label: D.rooms[c.room].name + ' ' + (c.s.k === 'new' ? '신규반 개설 희망' : c.name + (c.level ? '(' + c.level + ')' : '')),
@@ -297,7 +300,7 @@
     [].forEach.call(form.querySelectorAll('.only-adult'), function (el) { el.hidden = w !== 'adult'; });
     $('progKids').hidden = w !== 'kids'; $('progAdult').hidden = w !== 'adult';
     $('regularBox').hidden = !(w === 'kids' && wantsRegular());
-    var ca = w === 'kids' && childAge(); $('kNotice').hidden = !(ca && (ca.g === 'young' || ca.g === 'pre'));
+    lockRegular(childAge());
     onProgChange();
   }
   form.querySelector('.form-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setWho(b.dataset.who); });
@@ -346,7 +349,6 @@
     five:  { label: '5세', fit: '5세 특별반', kinds: ['5세'] },          // 만 48개월 이상 5세는 안전을 위해 5세 특별반만
     baby:  { label: '유아', fit: '유아 정규반', kinds: ['유아'] },
     elem:  { label: '초등', fit: '초등 정규반', kinds: ['초등'] },
-    pre:   { label: '만 4세', fit: '5세 특별반 사전 접수', kinds: ['5세'] },   // 48개월 직전: 미리 접수, 48개월부터 시작
     young: { label: '유아', fit: '개인 레슨', kinds: [] },
     teen:  { label: '중학생 이상', fit: '개인 레슨', kinds: [] }
   };
@@ -357,9 +359,9 @@
     // 개월 수: 만 48개월 이상이어야 5세(5세 특별반)로 봄
     var bm = +v.slice(5, 7), bd = +v.slice(8, 10);
     var months = (now.getFullYear() - by) * 12 + (now.getMonth() + 1 - bm) - (now.getDate() < bd ? 1 : 0);
-    var g = grade >= 7 ? 'teen' : grade >= 1 ? 'elem' : age >= 6 ? 'baby' : months >= 48 ? 'five' : months >= 48 - D.preFiveMonths ? 'pre' : 'young';
+    var g = grade >= 7 ? 'teen' : grade >= 1 ? 'elem' : age >= 6 ? 'baby' : months >= 48 ? 'five' : 'young';
     var from = new Date(by, bm - 1 + 48, bd);
-    return { g: g, age: age, grade: grade, months: months, from: from.getFullYear() + '년 ' + (from.getMonth() + 1) + '월 ' + from.getDate() + '일' };
+    return { g: g, age: age, grade: grade, months: months, near: g === 'young' && months >= 48 - D.preFiveMonths, from: from.getFullYear() + '년 ' + (from.getMonth() + 1) + '월 ' + from.getDate() + '일' };
   }
   function childGroup() { var a = who === 'kids' && childAge(); return a ? a.g : null; }
   function classFits(kind, g) { return GROUP[g].kinds.indexOf(kind) >= 0; }
@@ -368,7 +370,7 @@
     if (a.g === 'elem') return '초등 ' + a.grade + '학년';
     if (a.g === 'teen') return '중학생 이상';
     if (a.g === 'five') return '5세 (만 ' + a.months + '개월)';
-    if (a.g === 'young' || a.g === 'pre') return '만 ' + a.months + '개월';
+    if (a.g === 'young') return '만 ' + a.months + '개월';
     return a.age + '세 유아';
   }
   function matchClasses(day, h) {
@@ -385,25 +387,36 @@
     if (!a) { out.className = 'age-out'; out.textContent = '입력하면 유아 · 초등을 자동으로 구분해 맞는 반만 보여드려요'; }
     else {
       out.className = 'age-out on g-' + a.g;
-      out.textContent = a.g === 'young' ? ageText(a) + ' · 만 48개월 전에는 개인 레슨으로 수업해요'
-        : a.g === 'pre' ? ageText(a) + ' · ' + a.from + '(만 48개월)부터 5세 특별반 시작 · 지금 사전 접수할 수 있어요'
+      out.textContent = a.g === 'young' ? ageText(a) + ' · 정규반은 ' + a.from + '(만 48개월)부터 신청할 수 있어요'
         : ageText(a) + ' · ' + GROUP[a.g].fit + ' 대상' + (a.g === 'teen' ? '으로 상담드려요' : '이에요');
       // 나이에 맞는 정규반으로 자동 전환 (5세 → 5세 특별반, 6세 이상 → 키즈 정규반)
       var pv = progValue();
-      if ((a.g === 'five' || a.g === 'pre') && pv === '키즈정규반') setProg('kids', '5세 특별 정규반');
+      if (a.g === 'five' && pv === '키즈정규반') setProg('kids', '5세 특별 정규반');
       else if (a.g === 'young' && wantsRegular()) setProg('kids', '개인');
       else if ((a.g === 'baby' || a.g === 'elem') && pv === '5세 특별 정규반') setProg('kids', '키즈정규반');
     }
-    $('kNotice').hidden = !(who === 'kids' && a && (a.g === 'young' || a.g === 'pre'));
+    lockRegular(a);
     // 맞지 않는 희망 시간(다른 연령 반, 초등 전용 특강)은 정리
     var before = wishes.length;
     if (a) wishes = wishes.filter(function (w) {
       if (w.special) return a.g === 'elem';
-      if (w.cid != null) { var c = CL[w.cid]; return c.kind === '신규' || classFits(c.kind, a.g); }
+      if (w.cid != null) { var c = CL[w.cid]; return GROUP[a.g].kinds.length && (c.kind === '신규' || classFits(c.kind, a.g)); }
       return true;
     });
     renderTimeOpts();
     if (wishes.length !== before) { renderWish(); $('wHint').textContent = '입력한 생년월일과 맞지 않는 희망 시간 ' + (before - wishes.length) + '개를 지웠어요.'; }
+  }
+  // 만 48개월 미만: 정규반(키즈 정규반 · 5세 특별반) 선택을 막고 안내 배너 표시
+  function lockRegular(a) {
+    var young = who === 'kids' && a && a.g === 'young';
+    [].forEach.call($('progKids').querySelectorAll('input[data-regular]'), function (r) {
+      r.disabled = !!young; r.parentNode.classList.toggle('off', !!young);
+    });
+    $('kNotice').hidden = !young;
+    if (young) {
+      $('knNear').hidden = !a.near;
+      $('knNear').querySelector('span').textContent = a.from;
+    }
   }
   $('k-birth').max = today();
   $('k-birth').addEventListener('change', onBirthChange);
@@ -467,7 +480,6 @@
     var g = childGroup(), pv = progValue();
     if (g && progMode() === 'regular') {
       if (g === 'young') $('wHint').textContent = '정규반은 만 48개월(5세)부터 등록할 수 있어요. 그 전에는 개인 · 듀엣 · 트리오 레슨을 선택해 주세요.';
-      else if (g === 'pre' && pv === '5세 특별 정규반') $('wHint').textContent = '5세 특별반 사전 접수예요. ' + childAge().from + '(만 48개월)부터 수업을 시작해요. 원하는 시간에 미리 자리를 맡아 두세요.';
       else if (!GROUP[g].kinds.length) $('wHint').textContent = '입력한 생년월일 기준으로는 정규반 대상이 아니에요. 개인 · 듀엣 · 트리오 레슨으로 상담해 주세요.';
       else if (pv === '키즈정규반' && g === 'five') $('wHint').textContent = '5세(만 48개월 이상)는 안전을 위해 5세 특별반으로만 등록해요. 5세 특별반(3:1)을 선택해 주세요.';
       else if (pv === '5세 특별 정규반' && g !== 'five') $('wHint').textContent = '5세 특별반은 5세(만 48개월 이상) 친구들 대상이에요. 키즈 정규반(4:1)을 선택해 주세요.';
@@ -526,6 +538,7 @@
     var days = [].slice.call($('wDays').querySelectorAll('input:checked')).map(function (i) { return i.value; });
     var time = $('wTime').value;
     if (!days.length || !time) { showErr('희망 요일과 시간을 골라주세요.'); return; }
+    var cg = childGroup(); if (cg && progMode() === 'regular' && !GROUP[cg].kinds.length) { showErr('만 48개월 미만은 정규반 신청이 어려워요. 개인 레슨을 선택해 주세요.'); return; }
     msg.hidden = true;
     var sts = /^\d\d:00$/.test(time) ? days.map(function (d) { return slotStatus(d, +time.slice(0, 2)); }) : [];
     var allFull = sts.length && sts.every(function (s) { return s && s.k === 'full'; });
@@ -554,7 +567,6 @@
         '5. 선호 개월수 : ' + radio('months') + '\n' +
         '6. 셔틀 이용 : ' + shuttle + '\n' +
         '7. 기타 요청 사항 : ' + memo;
-      var ca = childAge(); if (ca && ca.g === 'pre' && wantsRegular()) b += '\n※ 5세 특별반 사전 접수 : 만 48개월(' + ca.from + ') 이후 시작 희망';
       if (wantsRegular()) b += '\n※ 정규반 · 수영 강습 경험 : ' + (radio('k-exp') || '-') + ' / 현재 진도 : ' + (val('k-level') || '-');
       return b;
     }
