@@ -610,3 +610,15 @@ select:disabled { color: var(--muted); background: #F5F7FA; }
 .kn-tel { background: var(--coral); color: #fff; }
 .kn-kakao { background: #FEE500; color: #3A1D1D; }
 .prog-lock { margin: 8px 0 0; font-size: 13px; font-weight: 700; color: #A35F00; background: #FFF4E5; border-radius: 10px; padding: 7px 10px; }
+
+/* 가운데 정렬: 상담 신청 왼쪽 영역 · 첫 화면 */
+.consult-side { text-align: center; }
+.consult-side .eyebrow { margin-left: auto; margin-right: auto; }
+.consult-seal { margin-left: auto; margin-right: auto; }
+.consult-contact { justify-content: center; }
+.consult-contact .btn { flex: 1 1 auto; }
+.consult-contact .see-tt { flex-basis: 100%; }
+.hero-copy { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.hero-copy .lead { margin-left: auto; margin-right: auto; }
+.hero-btns, .hero-points { justify-content: center; }
+br.sb { content: ''; }

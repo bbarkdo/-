@@ -10,6 +10,11 @@
   };
   var $ = function (id) { return document.getElementById(id); };
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  // 설명 문장이 끝날 때마다 줄을 나눠 읽기 쉽게 (…요. / …다. / …! / …? 뒤에 줄바꿈)
+  var SENT_SEL = '.sec-sub, .why p, .prog > p, .extra span, .rule > p, .ad-intro p, .ti p, .sp-desc, .consult-side .sub, .notice span, .qa p, .tt-caution, .tt-wait, .care-pill, .kid-notice ul + p, .ad-tag';
+  function splitSentences(el) {
+    el.innerHTML = el.innerHTML.replace(/<br class="sb">/g, ' ').replace(/([^\s\d.][.!?])(<\/b>)?\s+(?=[가-힣A-Za-z0-9(<])/g, '$1$2<br class="sb">');
+  }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function today() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function fmtDate(s) { var p = s.split('-'); return +p[1] + '월 ' + +p[2] + '일'; }
@@ -40,6 +45,7 @@
   }).join('');
   $('fInfo').textContent = info.name + ' · ' + info.address + ' · ' + info.tel;
   if (info.kakao) { $('kakaoBtn').href = info.kakao; $('kakaoBtn').hidden = false; }
+  if (info.instagram) { $('instaBtn').href = info.instagram; $('instaBtn').hidden = false; }
   [].forEach.call(document.querySelectorAll('[data-tel]'), function (x) { x.href = telHref; });
   [].forEach.call(document.querySelectorAll('[data-kakao]'), function (x) { if (info.kakao) x.href = info.kakao; else x.hidden = true; });
   if (info.instagram) $('iInsta').href = info.instagram; else $('iInsta').hidden = true;
@@ -199,7 +205,7 @@
     var m = b.dataset.mode;
     [].forEach.call(this.children, function (x) { x.setAttribute('aria-selected', x === b); });
     $('ttKidsPane').hidden = m !== 'kids'; $('ttAdultPane').hidden = m !== 'adult';
-    $('ttSub').innerHTML = SUB[m];
+    $('ttSub').innerHTML = SUB[m]; splitSentences($('ttSub'));
     if (m === 'adult') setWho('adult');
   });
 
@@ -289,7 +295,7 @@
      ========================================================== */
   var IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
   if (!IS_MOBILE) {
-    $('consultSub').textContent = '아래 내용을 채우고 버튼을 누르면 QR 코드가 나와요. 휴대폰 카메라로 찍으면 접수 문자가 바로 작성됩니다.';
+    $('consultSub').textContent = '아래 내용을 채우고 버튼을 누르면 QR 코드가 나와요. 휴대폰 카메라로 찍으면 접수 문자가 바로 작성됩니다.'; splitSentences($('consultSub'));
     $('submitBtn').textContent = '접수 내용 만들기';
   }
 
@@ -628,4 +634,5 @@
     $('smsCopy').addEventListener('click', function () { copyText(this, body, $('smsText')); });
     msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
+  [].forEach.call(document.querySelectorAll(SENT_SEL), splitSentences);
 })();
