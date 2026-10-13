@@ -134,13 +134,56 @@
     var b = e.target.closest('.cls'); if (!b) return;
     var c = CL[+b.dataset.id];
     setWho('kids');
-    var cb = $('progKids').querySelector('input[value="' + (c.kind === '5세' ? '5세 특별 정규반' : '키즈정규반') + '"]');
-    cb.checked = true; cb.dispatchEvent(new Event('change', { bubbles: true }));
+    setProg('kids', c.kind === '5세' ? '5세 특별 정규반' : '키즈정규반');
     addWish({ days: [c.day], time: c.time, freq: 1, label: D.rooms[c.room].name + ' ' + (c.s.k === 'new' ? '신규반 개설 희망' : c.name + (c.level ? '(' + c.level + ')' : '')),
       wait: c.s.k === 'full', isNew: c.s.k === 'new', cid: c.id });
     $('consult').scrollIntoView({ behavior: 'smooth' });
   });
   renderTT();
+
+  /* ---------- 성인 · 개인레슨 시간표 ----------
+     레슨 시작 가능 시간(privateHours) 중, 정규반 수업이나 이미 잡힌 레슨(privateBooked)이 없는
+     수조 수를 칸마다 보여줌 */
+  function freeRooms(day, h) {
+    var t = hh(h);
+    return ROOMS.filter(function (r) {
+      var busyClass = CL.some(function (c) { return c.room === r && c.day === day && c.time === t; });
+      var booked = (D.privateBooked[r] || []).indexOf(day + ' ' + h) >= 0;
+      return !busyClass && !booked;
+    }).length;
+  }
+  function renderAdult() {
+    var rows = union(D.privateHours.weekday, D.privateHours.sat), h = '<thead><tr><th></th>' + DAYS.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr></thead><tbody>';
+    rows.forEach(function (hr, i) {
+      if (i && hr - rows[i - 1] > 1) h += '<tr class="ad-gap"><td colspan="' + (DAYS.length + 1) + '">' + pad(rows[i - 1] + 1) + '~' + pad(hr - 1) + '시는 어린이 정규반 시간이에요</td></tr>';
+      h += '<tr><td class="time">' + pad(hr) + '<small>시</small></td>' + DAYS.map(function (d) {
+        var ok = (d === '토' ? D.privateHours.sat : D.privateHours.weekday).indexOf(hr) >= 0;
+        if (!ok) return '<td class="ad-na"><span>' + (d === '토' ? '협의' : '') + '</span></td>';
+        var n = freeRooms(d, hr);
+        return '<td><button type="button" class="ad-cell ad-' + n + '" data-d="' + d + '" data-h="' + hr + '"' + (n ? '' : ' disabled') +
+          ' aria-label="' + d + '요일 ' + hr + '시 ' + (n ? '예약 가능, 빈 수조 ' + n + '곳' : '예약 마감') + '">' + (n ? '가능<small>' + n + '곳</small>' : '마감') + '</button></td>';
+      }).join('') + '</tr>';
+    });
+    $('adGrid').innerHTML = h + '</tbody>';
+  }
+  $('adUpdated').textContent = fmtDate(D.updated) + ' 기준';
+  $('adultHours2').innerHTML = info.adultHours.map(function (x) { return '<li><b>' + esc(x[0]) + '</b> ' + x.slice(1).map(esc).join(' · ') + '</li>'; }).join('');
+  $('adGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('.ad-cell'); if (!b || b.disabled) return;
+    setProg(who === 'kids' ? 'kids' : 'adult', '개인');
+    addWish({ days: [b.dataset.d], time: hh(+b.dataset.h), freq: 1, label: '개인레슨' });
+    $('consult').scrollIntoView({ behavior: 'smooth' });
+  });
+  renderAdult();
+  var SUB = { kids: $('ttSub').innerHTML, adult: '비어 있는 시간을 누르면 상담 신청서에 바로 담겨요. 성인 레슨과 키즈 개인 · 듀엣 · 트리오 레슨의 예약 가능 시간이에요.' };
+  $('ttMode').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var m = b.dataset.mode;
+    [].forEach.call(this.children, function (x) { x.setAttribute('aria-selected', x === b); });
+    $('ttKidsPane').hidden = m !== 'kids'; $('ttAdultPane').hidden = m !== 'adult';
+    $('ttSub').innerHTML = SUB[m];
+    if (m === 'adult') setWho('adult');
+  });
 
   /* ---------- 방학특강 ---------- */
   var sp = D.special, td = today();
@@ -237,18 +280,66 @@
     [].forEach.call(form.querySelectorAll('.only-adult'), function (el) { el.hidden = w !== 'adult'; });
     $('progKids').hidden = w !== 'kids'; $('progAdult').hidden = w !== 'adult';
     $('regularBox').hidden = !(w === 'kids' && wantsRegular());
+    onProgChange();
   }
   form.querySelector('.form-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setWho(b.dataset.who); });
   function wantsRegular() { return !!$('progKids').querySelector('input[data-regular]:checked'); }
-  $('progKids').addEventListener('change', function () { $('regularBox').hidden = !wantsRegular(); });
+  $('progKids').addEventListener('change', function () { $('regularBox').hidden = !wantsRegular(); onProgChange(); });
+  $('progAdult').addEventListener('change', onProgChange);
+  function setProg(w, value) {
+    if (who !== w) setWho(w);
+    var r = (w === 'kids' ? $('progKids') : $('progAdult')).querySelector('input[value="' + value + '"]');
+    if (r && !r.checked) { r.checked = true; r.dispatchEvent(new Event('change', { bubbles: true })); }
+  }
   form.addEventListener('change', function (e) {
     if (e.target.name === 'shuttle') $('k-pickup').hidden = !$('shY').checked;
   });
 
-  // 희망 시간 목록
-  var tOpts = '<option value="">시간 선택</option>';
-  for (var m = 6 * 60; m <= 21 * 60; m += 30) tOpts += '<option>' + pad(Math.floor(m / 60)) + ':' + pad(m % 60) + '</option>';
-  $('wTime').innerHTML = tOpts + '<option value="시간 무관">시간 무관</option>';
+  // 희망 시간: 정각만, 고른 프로그램과 요일에 맞는 시간만 보여줌
+  //  정규반(5세 · 키즈) → regularHours, 개인 · 듀엣 · 트리오 → privateHours, 미선택 · 체험 · 대관 → 둘 다
+  function progMode() {
+    var r = (who === 'kids' ? $('progKids') : $('progAdult')).querySelector('input:checked');
+    return r ? r.dataset.mode : 'any';
+  }
+  function union(a, b) { return a.concat(b).filter(function (h, i, x) { return x.indexOf(h) === i; }).sort(function (p, q) { return p - q; }); }
+  function hoursFor(mode, day) {
+    var key = day === '토' ? 'sat' : 'weekday';
+    if (mode === 'regular') return D.regularHours[key];
+    if (mode === 'private') return D.privateHours[key];
+    return union(D.regularHours[key], D.privateHours[key]);
+  }
+  function allowedHours(mode, days) {
+    if (!days.length) days = ['월'];
+    return days.map(function (d) { return hoursFor(mode, d); }).reduce(function (acc, hs) { return acc.filter(function (h) { return hs.indexOf(h) >= 0; }); });
+  }
+  function hh(h) { return pad(h) + ':00'; }
+  var HINT = {
+    regular: '정규반(5세 특별반 · 키즈 정규반)은 평일 14~18시, 토요일 09~13시에 시작해요.',
+    private: '개인 · 듀엣 · 트리오는 평일 06~13시 · 19~21시, 토요일 09~13시에 시작해요. (토요일 그 외 시간은 강사와 협의)',
+    any: '희망 프로그램을 먼저 고르면 그 프로그램이 가능한 시간만 보여드려요.'
+  };
+  function selectedDays() { return [].slice.call($('wDays').querySelectorAll('input:checked')).map(function (i) { return i.value; }); }
+  function renderTimeOpts() {
+    var days = selectedDays(), hs = allowedHours(progMode(), days), cur = $('wTime').value;
+    var mixed = days.indexOf('토') >= 0 && days.some(function (d) { return d !== '토'; });
+    $('wTime').innerHTML = hs.length
+      ? '<option value="">시간 선택</option>' + hs.map(function (h) { return '<option' + (hh(h) === cur ? ' selected' : '') + '>' + hh(h) + '</option>'; }).join('') + '<option value="시간 무관"' + (cur === '시간 무관' ? ' selected' : '') + '>시간 무관</option>'
+      : '<option value="">평일과 토요일은 시간이 달라요 · 따로 추가해 주세요</option>';
+    $('wTime').disabled = !hs.length;
+    $('wHint').textContent = HINT[progMode()] + (mixed && hs.length ? ' 평일과 토요일에 모두 가능한 시간만 보여요.' : '');
+  }
+  // 프로그램이 바뀌면 맞지 않는 희망 시간은 정리
+  function onProgChange() {
+    var mode = progMode(), before = wishes.length;
+    wishes = wishes.filter(function (w) {
+      if (w.text || w.time === '시간 무관') return true;
+      var h = +w.time.slice(0, 2);
+      return w.days.every(function (d) { return hoursFor(mode, d).indexOf(h) >= 0; });
+    });
+    renderTimeOpts();
+    if (wishes.length !== before) { renderWish(); $('wHint').textContent = '선택한 프로그램과 맞지 않는 희망 시간 ' + (before - wishes.length) + '개를 지웠어요. ' + HINT[mode]; }
+  }
+  $('wDays').addEventListener('change', renderTimeOpts);
   function wishText(w) {
     return w.text || (w.days.join('/') + ' ' + w.time + (w.label ? ' ' + w.label : ''));
   }
@@ -280,8 +371,9 @@
     if (!days.length || !time) { showErr('희망 요일과 시간을 골라주세요.'); return; }
     msg.hidden = true;
     addWish({ days: days, time: time, freq: Math.min(days.length, 5) });
-    [].forEach.call($('wDays').querySelectorAll('input'), function (i) { i.checked = false; }); $('wTime').value = '';
+    [].forEach.call($('wDays').querySelectorAll('input'), function (i) { i.checked = false; }); renderTimeOpts(); $('wTime').value = '';
   });
+  renderTimeOpts();
 
   function val(id) { return $(id).value.trim(); }
   function radio(name) { var r = form.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; }
