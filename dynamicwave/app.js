@@ -156,8 +156,8 @@
     $('spTitle').textContent = $('spmTitle').textContent = sp.title;
     $('spPeriod').textContent = $('spmPeriod').textContent = sp.period;
     $('spDesc').textContent = sp.desc;
-    $('spUpdated').textContent = fmtDate(sp.updated) + ' 기준 ·';
-    $('spNote').textContent = sp.note;
+    $('spUpdated').textContent = '(' + fmtDate(sp.updated) + ' 기준 여석)';
+    $('spNote').innerHTML = [].concat(sp.note).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
     // 부별로 한 줄: [1부 · 시간] [퐁당풀 카드] [첨벙풀 카드]
     var n = 0;
     $('spList').innerHTML = sp.parts.map(function (pt) {
