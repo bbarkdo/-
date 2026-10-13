@@ -146,8 +146,9 @@
   var sp = D.special, td = today();
   var spOn = sp && sp.show && td >= sp.from && td <= sp.to;
   if (spOn) {
-    sp.sessions.forEach(function (s) { s.s = seat(s.cap, s.cur); });
-    var openCnt = sp.sessions.reduce(function (a, s) { return a + s.s.left; }, 0);
+    var spSlots = [];   // 버튼 번호 → { part, pool }
+    sp.parts.forEach(function (pt) { pt.pools.forEach(function (pl) { pl.s = seat(pl.cap, pl.cur); spSlots.push({ part: pt, pool: pl }); }); });
+    var openCnt = spSlots.reduce(function (a, x) { return a + x.pool.s.left; }, 0);
     $('special').hidden = false; $('navSp').hidden = false; $('spRibbon').hidden = false;
     $('spRibbonTag').textContent = sp.badge;
     $('spRibbonTxt').textContent = sp.title + (openCnt ? ' · 남은 자리 ' + openCnt + '석' : ' · 대기 접수 중');
@@ -157,17 +158,26 @@
     $('spDesc').textContent = sp.desc;
     $('spUpdated').textContent = fmtDate(sp.updated) + ' 기준 ·';
     $('spNote').textContent = sp.note;
-    $('spList').innerHTML = sp.sessions.map(function (s, i) {
-      return '<div class="sp-item' + (s.s.k === 'full' ? ' is-full' : '') + '"><span class="nm">' + esc(s.name) + '</span><span class="tm">' + esc(s.time) + '</span>' +
-        '<span class="tg">' + esc(s.target) + '</span>' + badge(s.s) +
-        '<button type="button" class="mini" data-sp="' + i + '">' + (s.s.k === 'full' ? '대기 접수하기' : '이 시간 신청하기') + '</button></div>';
+    // 부별로 한 줄: [1부 · 시간] [퐁당풀 카드] [첨벙풀 카드]
+    var n = 0;
+    $('spList').innerHTML = sp.parts.map(function (pt) {
+      return '<div class="sp-part"><div class="sp-when"><b>' + esc(pt.name) + '</b><span>' + esc(pt.time) + '</span></div>' +
+        pt.pools.map(function (pl) {
+          var r = D.rooms[pl.room];
+          return '<div class="sp-item pool-' + pl.room + (pl.s.k === 'full' ? ' is-full' : '') + '"><span class="sp-pool">' + r.icon + ' ' + esc(r.name) + '</span>' +
+            '<span class="tg">' + esc(pl.target) + '</span>' + badge(pl.s) +
+            '<button type="button" class="mini" data-sp="' + (n++) + '">' + (pl.s.k === 'full' ? '대기 접수하기' : '이 시간 신청하기') + '</button></div>';
+        }).join('') + '</div>';
     }).join('');
-    $('spmList').innerHTML = sp.sessions.map(function (s) { return '<li><span><b>' + esc(s.name) + '</b> ' + esc(s.time) + '</span>' + badge(s.s) + '</li>'; }).join('');
+    $('spmList').innerHTML = sp.parts.map(function (pt) {
+      return '<li><span class="spm-when"><b>' + esc(pt.name) + '</b> ' + esc(pt.time.split(' ')[0]) + '</span><span class="spm-pools">' +
+        pt.pools.map(function (pl) { return '<span class="spm-pool">' + esc(D.rooms[pl.room].name) + ' ' + badge(pl.s) + '</span>'; }).join('') + '</span></li>';
+    }).join('');
     $('spList').addEventListener('click', function (e) {
       var b = e.target.closest('[data-sp]'); if (!b) return;
-      var s = sp.sessions[+b.dataset.sp];
+      var x = spSlots[+b.dataset.sp];
       setWho('kids');
-      addWish({ text: sp.badge + ' ' + s.name + ' · 평일 ' + s.time + (s.s.k === 'full' ? ' (대기)' : '') });
+      addWish({ text: sp.badge + ' ' + x.part.name + '(' + x.part.time + ') ' + D.rooms[x.pool.room].name + (x.pool.s.k === 'full' ? ' (대기)' : '') });
       $('consult').scrollIntoView({ behavior: 'smooth' });
     });
     // 팝업 (하루 1회)
