@@ -390,10 +390,6 @@
       out.textContent = a.g === 'young' ? ageText(a) + ' · 정규반은 ' + a.from + '(만 48개월)부터 신청할 수 있어요'
         : ageText(a) + ' · ' + GROUP[a.g].fit + ' 대상' + (a.g === 'teen' ? '으로 상담드려요' : '이에요');
       // 나이에 맞는 정규반으로 자동 전환 (5세 → 5세 특별반, 6세 이상 → 키즈 정규반)
-      var pv = progValue();
-      if (a.g === 'five' && pv === '키즈정규반') setProg('kids', '5세 특별 정규반');
-      else if (a.g === 'young' && wantsRegular()) setProg('kids', '개인');
-      else if ((a.g === 'baby' || a.g === 'elem') && pv === '5세 특별 정규반') setProg('kids', '키즈정규반');
     }
     lockRegular(a);
     // 맞지 않는 희망 시간(다른 연령 반, 초등 전용 특강)은 정리
@@ -407,11 +403,33 @@
     if (wishes.length !== before) { renderWish(); $('wHint').textContent = '입력한 생년월일과 맞지 않는 희망 시간 ' + (before - wishes.length) + '개를 지웠어요.'; }
   }
   // 만 48개월 미만: 정규반(키즈 정규반 · 5세 특별반) 선택을 막고 안내 배너 표시
+  // 생년월일에 맞지 않는 정규반 버튼은 잠금
+  //  5세 → 키즈 정규반 잠금 · 6세 이상(유아·초등) → 5세 특별반 잠금 · 48개월 미만/중학생 이상 → 둘 다 잠금
+  var autoProg = false;   // 프로그램이 자동으로 바뀐 상태인지
+  $('progKids').addEventListener('click', function (e) { var l = e.target.closest('label'); if (l && !l.querySelector('input').disabled) autoProg = false; });
+  var PROG_NOTE = {
+    five: '5세(만 48개월 이상)는 안전을 위해 5세 특별반만 선택할 수 있어요.',
+    baby: '6세 이상은 키즈 정규반(4:1)으로 신청해요. 5세 특별반은 5세 친구들 반이에요.',
+    elem: '초등학생은 키즈 정규반(4:1)으로 신청해요.',
+    young: '만 48개월 미만은 개인 · 듀엣 · 트리오 레슨으로 신청해 주세요.',
+    teen: '중학생 이상은 개인 · 듀엣 · 트리오 레슨으로 신청해 주세요.'
+  };
   function lockRegular(a) {
-    var young = who === 'kids' && a && a.g === 'young';
+    var g = who === 'kids' && a ? a.g : null;
     [].forEach.call($('progKids').querySelectorAll('input[data-regular]'), function (r) {
-      r.disabled = !!young; r.parentNode.classList.toggle('off', !!young);
+      var kind = r.value === '5세 특별 정규반' ? '5세' : 'kids';
+      var off = !!g && (GROUP[g].kinds.length === 0 || (kind === '5세' ? g !== 'five' : g === 'five'));
+      r.disabled = off; r.parentNode.classList.toggle('off', off);
+      r.parentNode.title = off ? PROG_NOTE[g] : '';
     });
+    // 잠긴 버튼이 선택돼 있었다면 맞는 프로그램으로 옮김
+    var cur = $('progKids').querySelector('input:checked');
+    var fit = g === 'five' ? '5세 특별 정규반' : (g === 'baby' || g === 'elem') ? '키즈정규반' : '개인';
+    // 잠긴 버튼이 선택돼 있거나, 이전에 자동으로 바꾼 선택이면 나이에 맞게 다시 맞춤 (보호자가 직접 고른 건 유지)
+    if (g && cur && (cur.disabled || (autoProg && cur.value !== fit))) { setProg('kids', fit); autoProg = true; }
+    $('progNote').textContent = g ? PROG_NOTE[g] : '';
+    $('progNote').hidden = !g;
+    var young = g === 'young';
     $('kNotice').hidden = !young;
     if (young) {
       $('knNear').hidden = !a.near;

@@ -609,3 +609,4 @@ select:disabled { color: var(--muted); background: #F5F7FA; }
 .kn-btns .btn { padding: 10px 14px; font-size: 14px; }
 .kn-tel { background: var(--coral); color: #fff; }
 .kn-kakao { background: #FEE500; color: #3A1D1D; }
+.prog-lock { margin: 8px 0 0; font-size: 13px; font-weight: 700; color: #A35F00; background: #FFF4E5; border-radius: 10px; padding: 7px 10px; }
