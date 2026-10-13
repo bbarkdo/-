@@ -329,15 +329,82 @@
     any: '희망 프로그램을 먼저 고르면 그 프로그램이 가능한 시간만 보여드려요.'
   };
   function selectedDays() { return [].slice.call($('wDays').querySelectorAll('input:checked')).map(function (i) { return i.value; }); }
+  // 요일 · 시간별 여석 상태 (시간 목록과 아래 안내에 표시)
+  //  정규반: 고른 반(5세 / 유아·초등)의 수업 중 가장 여유 있는 반 기준 · 개인레슨: 빈 수조 유무
+  var ST_ICON = { open: '🟢', few: '🟠', full: '🔴', new: '⚪', none: '⚪' };
+  function progValue() { var r = (who === 'kids' ? $('progKids') : $('progAdult')).querySelector('input:checked'); return r ? r.value : ''; }
+  function matchClasses(day, h) {
+    var five = progValue() === '5세 특별 정규반';
+    return CL.filter(function (c) {
+      return c.day === day && c.time === hh(h) && (c.kind === '신규' || (five ? c.kind === '5세' : c.kind === '유아' || c.kind === '초등'));
+    });
+  }
+  function slotStatus(day, h) {
+    var mode = progMode();
+    if (mode === 'private') {
+      return freeRooms(day, h) ? { k: 'open', txt: '예약 가능' } : { k: 'full', txt: '마감 · 대기' };
+    }
+    if (mode !== 'regular') return null;
+    var ms = matchClasses(day, h);
+    var open = ms.filter(function (c) { return c.s.k === 'open' || c.s.k === 'few'; });
+    if (open.length) {
+      var left = Math.max.apply(null, open.map(function (c) { return c.s.left; }));
+      return left === 1 ? { k: 'few', txt: '1자리 남음' } : { k: 'open', txt: left + '자리 남음' };
+    }
+    if (ms.some(function (c) { return c.s.k === 'new'; })) return { k: 'new', txt: '개설 가능 (' + D.newMin + '인~)' };
+    if (ms.length) {
+      var w = ms.reduce(function (a, c) { return a + (c.s.wait || 0); }, 0);
+      return { k: 'full', txt: '마감 · 대기' + (D.showWait && w ? ' ' + w + '명' : '') };
+    }
+    return { k: 'none', txt: '반 없음 · 상담' };
+  }
+  function optLabel(days, h) {
+    if (!days.length) return hh(h);
+    var sts = days.map(function (d) { return slotStatus(d, h); });
+    if (!sts[0]) return hh(h);
+    var same = sts.every(function (s) { return s.txt === sts[0].txt; });
+    return hh(h) + '   ' + (same ? ST_ICON[sts[0].k] + ' ' + sts[0].txt
+      : sts.map(function (s, i) { return days[i] + ' ' + ST_ICON[s.k] + s.txt; }).join(' / '));
+  }
+  function renderStatus() {
+    var days = selectedDays(), t = $('wTime').value, box = $('wStatus'), mode = progMode();
+    if (!days.length || !/^\d\d:00$/.test(t) || mode === 'any') { box.hidden = true; return; }
+    var h = +t.slice(0, 2);
+    box.innerHTML = days.map(function (d) {
+      if (mode === 'private') {
+        var s = slotStatus(d, h);
+        return '<div class="ws-row"><b>' + d + ' ' + t + '</b>' + badge(s.k === 'full' ? { k: 'full', txt: '예약 마감 · 대기 접수' } : { k: 'open', txt: '예약 가능' }) + '</div>';
+      }
+      var ms = matchClasses(d, h);
+      if (!ms.length) return '<div class="ws-row"><b>' + d + ' ' + t + '</b><span class="ws-none">이 시간에는 해당 반이 없어요 · 상담 시 안내드려요</span></div>';
+      return '<div class="ws-row"><b>' + d + ' ' + t + '</b><span class="ws-list">' + ms.map(function (c) {
+        var s = c.s.k === 'new' ? { k: 'new', txt: '수업 없음 · ' + D.newMin + '인부터 개설' }
+          : c.s.k === 'full' ? { k: 'full', txt: '마감 · 대기' + (D.showWait && c.s.wait ? ' ' + c.s.wait + '명' : ' 접수') } : c.s;
+        return '<span class="ws-item">' + esc(D.rooms[c.room].name) + ' · ' + (c.kind === '신규' ? '신규반' : esc(c.short) + (c.level ? '(' + esc(c.level) + ')' : '')) + ' ' + badge(s) + '</span>';
+      }).join('') + '</span></div>';
+    }).join('');
+    box.hidden = false;
+  }
   function renderTimeOpts() {
     var days = selectedDays(), hs = allowedHours(progMode(), days), cur = $('wTime').value;
     var mixed = days.indexOf('토') >= 0 && days.some(function (d) { return d !== '토'; });
     $('wTime').innerHTML = hs.length
-      ? '<option value="">시간 선택</option>' + hs.map(function (h) { return '<option' + (hh(h) === cur ? ' selected' : '') + '>' + hh(h) + '</option>'; }).join('') + '<option value="시간 무관"' + (cur === '시간 무관' ? ' selected' : '') + '>시간 무관</option>'
+      ? '<option value="">' + (days.length ? '시간 선택' : '요일을 먼저 고르면 여석이 보여요') + '</option>' + hs.map(function (h) { return '<option value="' + hh(h) + '"' + (hh(h) === cur ? ' selected' : '') + '>' + optLabel(days, h) + '</option>'; }).join('') + '<option value="시간 무관"' + (cur === '시간 무관' ? ' selected' : '') + '>시간 무관</option>'
       : '<option value="">평일과 토요일은 시간이 달라요 · 따로 추가해 주세요</option>';
     $('wTime').disabled = !hs.length;
     $('wHint').textContent = HINT[progMode()] + (mixed && hs.length ? ' 평일과 토요일에 모두 가능한 시간만 보여요.' : '');
+    renderStatus();
   }
+  $('wTime').addEventListener('change', renderStatus);
+  // '시간표 보기' 버튼: 고른 대상 · 프로그램에 맞는 시간표 탭을 열고 이동
+  [].forEach.call(document.querySelectorAll('[data-see]'), function (b) {
+    b.addEventListener('click', function () {
+      var mode = who === 'adult' || progMode() === 'private' ? 'adult' : 'kids';
+      var tab = $('ttMode').querySelector('[data-mode="' + mode + '"]');
+      if (tab.getAttribute('aria-selected') !== 'true') tab.click();
+      $('timetable').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
   // 프로그램이 바뀌면 맞지 않는 희망 시간은 정리
   function onProgChange() {
     var mode = progMode(), before = wishes.length;
@@ -380,8 +447,11 @@
     var time = $('wTime').value;
     if (!days.length || !time) { showErr('희망 요일과 시간을 골라주세요.'); return; }
     msg.hidden = true;
-    addWish({ days: days, time: time, freq: Math.min(days.length, 5) });
-    [].forEach.call($('wDays').querySelectorAll('input'), function (i) { i.checked = false; }); renderTimeOpts(); $('wTime').value = '';
+    var sts = /^\d\d:00$/.test(time) ? days.map(function (d) { return slotStatus(d, +time.slice(0, 2)); }) : [];
+    var allFull = sts.length && sts.every(function (s) { return s && s.k === 'full'; });
+    var allNew = sts.length && sts.every(function (s) { return s && s.k === 'new'; });
+    addWish({ days: days, time: time, freq: Math.min(days.length, 5), wait: allFull, isNew: allNew });
+    [].forEach.call($('wDays').querySelectorAll('input'), function (i) { i.checked = false; }); $('wTime').value = ''; renderTimeOpts();
   });
   renderTimeOpts();
 

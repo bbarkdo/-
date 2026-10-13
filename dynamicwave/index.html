@@ -436,6 +436,7 @@
           <div class="consult-contact">
             <a class="btn btn-sub" id="telBtn" href="#">📞 전화 상담</a>
             <a class="btn btn-sub" id="kakaoBtn" href="#" target="_blank" rel="noopener" hidden>💬 카카오톡</a>
+            <button type="button" class="btn btn-sub see-tt" data-see>📅 현재 시간표 보기</button>
           </div>
         </div>
 
@@ -495,7 +496,7 @@
 
           <!-- 4. 희망 요일·시간 -->
           <div class="field">
-            <span class="lbl"><b>4</b>희망 요일 · 시간 · 주 횟수 <small>(여러 개 추가 가능)</small></span>
+            <div class="lbl-row"><span class="lbl"><b>4</b>희망 요일 · 시간 · 주 횟수 <small>(여러 개 추가 가능)</small></span><button type="button" class="link-btn" data-see>📅 시간표 보기</button></div>
             <div class="wish-builder">
               <div class="day-checks" id="wDays">
                 <label><input type="checkbox" value="월"><span>월</span></label><label><input type="checkbox" value="화"><span>화</span></label><label><input type="checkbox" value="수"><span>수</span></label><label><input type="checkbox" value="목"><span>목</span></label><label><input type="checkbox" value="금"><span>금</span></label><label><input type="checkbox" value="토"><span>토</span></label>
@@ -503,6 +504,7 @@
               <select id="wTime" aria-label="시간"></select>
               <button type="button" class="mini" id="wAdd">+ 추가</button>
             </div>
+            <div class="w-status" id="wStatus" hidden></div>
             <p class="wish-hint" id="wHint"></p>
             <ul class="wish-list" id="wishList"><li class="empty">시간표에서 수업을 누르거나, 위에서 요일·시간을 골라 추가하세요.</li></ul>
           </div>
