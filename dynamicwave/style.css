@@ -585,3 +585,18 @@ select:disabled { color: var(--muted); background: #F5F7FA; }
 .age-out.g-five { background: #FFF1DC; color: #A35F00; }
 .age-out.g-baby { background: #FFE9EE; color: #C2405A; }
 .age-out.g-young, .age-out.g-teen { background: #F2F4F7; color: #5B6F86; }
+
+/* 48개월 미만 안내 · 수영복 규정 */
+.kid-notice { background: #FFF4E5; border: 2px solid #FFD8A3; border-radius: 16px; padding: 12px 16px; font-size: 14px; }
+.kid-notice > b { display: block; color: #A35F00; margin-bottom: 4px; }
+.kid-notice ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
+.kid-notice li b { width: auto; height: auto; background: none; display: inline; }
+.age-out.g-pre { background: #FFF1DC; color: #A35F00; }
+.rule-wide { grid-column: 1 / -1; }
+.wear-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.wear { border-radius: 14px; padding: 12px 16px; font-size: 14px; }
+.wear > b { display: block; margin-bottom: 4px; }
+.wear ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; color: #3B556F; }
+.wear.ok { background: #E9F8F0; } .wear.ok > b { color: #178A52; }
+.wear.no { background: #FFEEEF; } .wear.no > b { color: #D23A47; }
+@media (max-width: 560px) { .wear-grid { grid-template-columns: 1fr; } }
