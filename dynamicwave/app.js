@@ -17,9 +17,11 @@
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 
   // 남은 자리 → 상태
-  function seat(cap, cur) {
-    var left = cap - cur;
-    if (left <= 0) return { k: 'full', left: 0, txt: '마감 · 대기 접수' };
+  // wait: 대기 인원 — 대기자가 남은 자리를 먼저 채운다고 보고 계산
+  function seat(cap, cur, wait) {
+    wait = wait || 0;
+    var left = cap - cur - wait;
+    if (left <= 0) return { k: 'full', left: 0, wait: wait, txt: '마감 · 대기 접수' };
     if (left === 1) return { k: 'few', left: 1, txt: '1자리 남음' };
     return { k: 'open', left: left, txt: left + '자리 남음' };
   }
@@ -65,10 +67,11 @@
   if (!tt.day) tt.day = '월';
   // [요일, 시간, 수조, 반, 단계, 인원, (정원)] → 객체
   var CL = D.classes.map(function (r, i) {
-    var k = KIND[r[3]], cap = r[6] || D.cap[r[3]];
-    var s = r[3] === '신규' ? { k: 'new', left: cap, txt: D.newMin + '인부터 개설' } : seat(cap, r[5]);
+    var k = KIND[r[3]], cap = r[7] || D.cap[r[3]];
+    var s = r[3] === '신규' ? { k: 'new', left: cap, txt: D.newMin + '인부터 개설' } : seat(cap, r[5], r[6]);
     return { id: i, day: r[0], time: r[1], room: r[2], kind: r[3], cls: k.cls, name: k.name, short: k.short, level: r[4], s: s };
   });
+  if (!D.showWait) { $('lgWait').hidden = true; $('ttWaitNote').hidden = true; }
   $('ttUpdated').textContent = fmtDate(D.updated) + ' 기준 여석';
   var TIMES = CL.map(function (c) { return c.time; }).filter(function (t, i, a) { return a.indexOf(t) === i; }).sort();
   var STAMP = { full: '마감', few: '임박', open: '여유', new: '신규' };
@@ -84,9 +87,10 @@
       return '<button type="button" class="cls slot-empty" data-id="' + c.id + '" aria-label="' + esc(D.rooms[c.room].name + ' ' + c.day + '요일 ' + c.time + ', 현재 수업 없음. 유아 또는 초등 ' + D.newMin + '인 이상 신청 시 개설 가능. 누르면 상담 신청서에 추가') + '">' +
         '<span class="se-none">수업 없음</span><span class="se-plus">＋ 개설 가능</span><span class="se-min">' + D.newMin + '인부터</span></button>';
     }
-    var seatTxt = c.s.k === 'full' ? '대기 접수' : c.s.k === 'few' ? '1자리 남음' : c.s.k === 'new' ? c.s.txt : c.s.left + '자리 남음';
-    return '<button type="button" class="cls t-' + c.cls + ' st-' + c.s.k + '" data-id="' + c.id + '" ' +
-      'aria-label="' + esc(D.rooms[c.room].name + ' ' + c.day + '요일 ' + c.time + ' ' + c.name + (c.level ? ' ' + c.level : '') + ', ' + (c.s.k === 'full' ? '마감, 대기 접수 가능' : c.s.k === 'new' ? '신규 개설 가능, ' + c.s.txt : seatTxt) + ', 누르면 상담 신청서에 추가') + '">' +
+    var w = D.showWait ? c.s.wait : 0;
+    var seatTxt = c.s.k === 'full' ? (w ? '대기 ' + w + '명' : '대기 접수 가능') : c.s.k === 'few' ? '1자리 남음' : c.s.k === 'new' ? c.s.txt : c.s.left + '자리 남음';
+    return '<button type="button" class="cls t-' + c.cls + ' st-' + c.s.k + (w >= 3 ? ' wait-many' : w ? ' wait-some' : '') + '" data-id="' + c.id + '" ' +
+      'aria-label="' + esc(D.rooms[c.room].name + ' ' + c.day + '요일 ' + c.time + ' ' + c.name + (c.level ? ' ' + c.level : '') + ', ' + (c.s.k === 'full' ? '마감, ' + (w ? '현재 대기 ' + w + '명, ' : '') + '대기 접수 가능' : c.s.k === 'new' ? '신규 개설 가능, ' + c.s.txt : seatTxt) + ', 누르면 상담 신청서에 추가') + '">' +
       '<span class="stamp">' + STAMP[c.s.k] + '</span>' +
       '<span class="cn">' + esc(c.short) + '</span>' +
       (c.level ? '<span class="cl">' + esc(c.level) + '</span>' : '') +

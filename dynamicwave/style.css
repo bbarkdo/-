@@ -214,6 +214,7 @@ code { background: var(--sky-l); padding: 1px 6px; border-radius: 6px; font-size
 .lg i { font-style: normal; font-weight: 700; font-size: 12px; padding: 3px 8px; border-radius: 8px; background: var(--sb); color: var(--st); border: 2px solid var(--sl); }
 .lg.st-few i { background: var(--sl); color: #fff; }
 .lg.st-full i { background: #fff; border-color: var(--st); }
+.lg.lg-wait i { background: #E5484D; color: #fff; border-color: #E5484D; border-radius: 999px; }
 .lg.lg-empty i { background: transparent; color: #6F8DA8; border: 1.5px dashed #C9D6E2; }
 .tt-updated { margin-left: auto; font-weight: 700; color: var(--sky-d); }
 
@@ -246,8 +247,12 @@ td.time small { font-size: 11px; margin-left: 1px; }
 .st-few .stamp { background: var(--sl); color: #fff; animation: blink 1.6s ease-in-out infinite; }
 .cls.st-full { background: repeating-linear-gradient(135deg, #EEF1F5 0 7px, #E4E9EF 7px 14px); }
 .st-full .cn, .st-full .cl { color: #9AA6B4; }
-.cls.st-full .stamp { position: absolute; margin: 0; top: 50%; right: 50%; transform: translate(50%, -50%) rotate(-12deg); font-size: 17px; padding: 3px 8px; border: 2.5px solid var(--st); background: rgba(255,255,255,.85); letter-spacing: .1em; }
+.cls.st-full .stamp { font-size: 12px; padding: 3px 7px; border: 2px solid var(--st); background: #fff; color: var(--st); letter-spacing: .12em; }
 .st-full .cs { color: #6B7A8C; font-weight: 500; }
+/* 마감 반의 대기 인원 */
+.wait-some .cs, .wait-many .cs { display: inline-flex; align-self: flex-start; gap: 3px; margin-top: auto; padding: 2px 7px; border-radius: 999px; font-weight: 700; color: #fff; background: #8A97A6; }
+.wait-many .cs { background: #E5484D; }
+.wait-many .cs::after { content: '·많음'; font-weight: 500; opacity: .9; }
 /* 개설 전 빈 시간: 카드 대신 흐린 점선 빈칸 */
 .cls.slot-empty { background: transparent; border: 1.5px dashed #C9D6E2; align-items: center; justify-content: center; text-align: center; gap: 1px; color: #8796A6; }
 .cls.slot-empty::before { display: none; }
@@ -279,7 +284,7 @@ td.time small { font-size: 11px; margin-left: 1px; }
 .tt-day .cls .cl { font-size: 12px; }
 .tt-day .cls .cs { font-size: 12.5px; }
 .tt-day .cls .stamp { font-size: 12px; }
-.tt-day .st-full .stamp { font-size: 19px; }
+.tt-day .st-full .stamp { font-size: 13.5px; }
 .tt-empty { text-align: center; color: var(--muted); padding: 30px 0; }
 
 .tt-info { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
@@ -291,6 +296,7 @@ td.time small { font-size: 11px; margin-left: 1px; }
 .ti-new { background: #EAF7FE; border: 2px dashed #7CCBF2; }
 .ti-new em { font-style: normal; font-weight: 700; color: #fff; background: #7CCBF2; padding: 1px 6px; border-radius: 6px; }
 .ti-adult { background: #EAFAF6; border: 2px solid #BDEDE2; }
+.tt-wait { margin: 14px 0 0; padding: 12px 16px; border-radius: 14px; background: #FFF0F0; color: #9B2C33; font-size: 13.5px; }
 .tt-caution { margin: 14px 0 0; padding: 12px 16px; border-radius: 14px; background: #FFF8E1; color: #7A5A00; font-size: 13.5px; }
 @media (max-width: 1100px) { .pools { grid-template-columns: 1fr; } }
 @media (max-width: 760px) {
@@ -468,3 +474,5 @@ textarea { min-height: 86px; resize: vertical; }
 .spm-list li { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--tint); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
 .modal-btns { display: flex; flex-direction: column; gap: 6px; }
 @keyframes pop { from { transform: scale(.9); opacity: 0; } }
+.tt-grid .wait-some .cs, .tt-grid .wait-many .cs { white-space: nowrap; font-size: 11px; padding: 2px 6px; }
+.tt-grid .wait-many .cs::after { content: none; }
