@@ -6,7 +6,7 @@
     '5세': { cls: 'five', name: '5세 특별반', short: '5세반' },
     '유아': { cls: 'baby', name: '유아 정규반', short: '유아반' },
     '초등': { cls: 'elem', name: '초등 정규반', short: '초등반' },
-    '신규': { cls: 'new', name: '유아·초등 신규반', short: '유아·초등' }
+    '신규': { cls: 'new', name: '신규반', short: '신규반' }
   };
   var $ = function (id) { return document.getElementById(id); };
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -77,14 +77,14 @@
   var STAMP = { full: '마감', few: '임박', open: '여유', new: '신규' };
 
   function visible(c) {
-    var kindOk = tt.f === 'all' || c.kind === tt.f || (c.kind === '신규' && tt.f !== '5세');
+    var kindOk = tt.f === 'all' || c.kind === tt.f || c.kind === '신규';
     return kindOk && (!tt.open || (c.s.k !== 'full' && c.s.k !== 'new'));
   }
   function roomName(n) { var r = D.rooms[n]; return r.icon + ' ' + r.name; }
   function clsBtn(c) {
     // 아직 개설 전인 시간: 수업 카드가 아니라 '빈 칸'처럼 보이게
     if (c.s.k === 'new') {
-      return '<button type="button" class="cls slot-empty" data-id="' + c.id + '" aria-label="' + esc(D.rooms[c.room].name + ' ' + c.day + '요일 ' + c.time + ', 현재 수업 없음. 유아 또는 초등 ' + D.newMin + '인 이상 신청 시 개설 가능. 누르면 상담 신청서에 추가') + '">' +
+      return '<button type="button" class="cls slot-empty" data-id="' + c.id + '" aria-label="' + esc(D.rooms[c.room].name + ' ' + c.day + '요일 ' + c.time + ', 현재 수업 없음. 5세, 유아 또는 초등 ' + D.newMin + '인 이상 신청 시 개설 가능. 누르면 상담 신청서에 추가') + '">' +
         '<span class="se-none">수업 없음</span><span class="se-plus">＋ 개설 가능</span><span class="se-min">' + D.newMin + '인부터</span></button>';
     }
     var w = D.showWait ? c.s.wait : 0;
@@ -184,8 +184,9 @@
   var term = 1;
   function renderPrice() {
     var cols = D.priceCols.length;
-    var h = '<table class="ptable"><thead><tr><th class="pt-h">' + (term === 3 ? '3개월권' : '1개월 수강권') + ' <small>(1인 기준)</small></th>' +
-      D.priceCols.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr></thead>';
+    // 1개월권 / 3개월권 모두 같은 서식: 제목 · 열 제목(주 n회, 총 횟수) · 금액 정렬
+    var h = '<table class="ptable"><thead><tr><th class="pt-h">' + term + '개월권 <small>(1인 기준)</small></th>' +
+      D.priceCols.map(function (n) { return '<th>주 ' + n + '회<small>(' + (n * 4 * term) + '회)</small></th>'; }).join('') + '</tr></thead>';
     D.prices.forEach(function (sec) {
       var calc = term === 3 && sec.m3;
       h += '<tbody><tr class="pt-sec"><th colspan="' + (cols + 1) + '">' + esc(sec.title) + (sec.sub ? ' <small>(' + esc(sec.sub) + ')</small>' : '') + '</th></tr>';
@@ -193,11 +194,11 @@
         var vals = r.slice(1), isTerm = vals.length === cols && calc;
         h += '<tr><td>' + esc(r[0]) + '</td>' + (vals.length === cols
           ? vals.map(function (v) { return '<td>' + won(isTerm ? Math.round(v * 3 * 0.9) : v) + '</td>'; }).join('')
-          : '<td colspan="' + cols + '" class="one">' + won(vals[0]) + '</td>') + '</tr>';
+          : '<td colspan="' + cols + '">' + won(vals[0]) + '</td>') + '</tr>';
       });
       h += '</tbody>';
     });
-    $('pBody').innerHTML = h + '</table>' + (term === 3 ? '<p class="pt-tip">3개월 금액 = 1개월 × 3 × 0.9 (참고용 계산이에요. 정확한 금액은 상담 시 안내드려요.)</p>' : '');
+    $('pBody').innerHTML = h + '</table>' + '<p class="pt-tip">' + (term === 3 ? '3개월권 = 1개월 금액 × 3 × 0.9 (10% 할인) · 셔틀 · 자유수영 · 대관 · 체험은 기간과 관계없이 같은 금액이에요.' : '3개월권으로 등록하면 10% 추가 할인돼요.') + '</p>';
   }
   $('pTerm').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
