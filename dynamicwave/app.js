@@ -134,6 +134,11 @@
     var b = e.target.closest('.cls'); if (!b) return;
     var c = CL[+b.dataset.id];
     setWho('kids');
+    var g = childGroup();
+    if (g && c.kind !== '신규' && !classFits(c.kind, g)) {
+      $('consult').scrollIntoView({ behavior: 'smooth' });
+      return showErr('이 수업은 ' + c.name + '이에요. 입력한 생년월일 기준으로는 ' + GROUP[g].fit + ' 대상이라 신청할 수 없어요.');
+    }
     setProg('kids', c.kind === '5세' ? '5세 특별 정규반' : '키즈정규반');
     addWish({ days: [c.day], time: c.time, freq: 1, label: D.rooms[c.room].name + ' ' + (c.s.k === 'new' ? '신규반 개설 희망' : c.name + (c.level ? '(' + c.level + ')' : '')),
       wait: c.s.k === 'full', isNew: c.s.k === 'new', cid: c.id });
@@ -230,7 +235,9 @@
       var b = e.target.closest('[data-sp]'); if (!b) return;
       var x = spSlots[+b.dataset.sp];
       setWho('kids');
-      addWish({ text: sp.badge + ' ' + x.part.name + '(' + x.part.time + ') ' + D.rooms[x.pool.room].name + (x.pool.s.k === 'full' ? ' (대기)' : '') });
+      var g = childGroup();
+      if (g && g !== 'elem') { $('consult').scrollIntoView({ behavior: 'smooth' }); return showErr('겨울방학 특강은 초등학생 전용이에요. 입력한 생년월일 기준으로는 신청할 수 없어요.'); }
+      addWish({ special: true, text: sp.badge + ' ' + x.part.name + '(' + x.part.time + ') ' + D.rooms[x.pool.room].name + (x.pool.s.k === 'full' ? ' (대기)' : '') });
       $('consult').scrollIntoView({ behavior: 'smooth' });
     });
     // 팝업 (하루 1회)
@@ -333,12 +340,58 @@
   //  정규반: 고른 반(5세 / 유아·초등)의 수업 중 가장 여유 있는 반 기준 · 개인레슨: 빈 수조 유무
   var ST_ICON = { open: '🟢', few: '🟠', full: '🔴', new: '⚪', none: '⚪' };
   function progValue() { var r = (who === 'kids' ? $('progKids') : $('progAdult')).querySelector('input:checked'); return r ? r.value : ''; }
+  // 생년월일 → 유아 / 초등 자동 구분 (한국 학년 기준: 3월 새 학년, 나이는 학년도 기준 세는 나이)
+  var GROUP = {
+    five:  { label: '5세', fit: '5세 특별반 · 유아 정규반', kinds: ['5세', '유아'] },
+    baby:  { label: '유아', fit: '유아 정규반', kinds: ['유아'] },
+    elem:  { label: '초등', fit: '초등 정규반', kinds: ['초등'] },
+    young: { label: '유아', fit: '개인 레슨', kinds: [] },
+    teen:  { label: '중학생 이상', fit: '개인 레슨', kinds: [] }
+  };
+  function childAge() {
+    var v = $('k-birth').value; if (!/^\d{4}-\d\d-\d\d$/.test(v)) return null;
+    var now = new Date(), sy = now.getMonth() >= 2 ? now.getFullYear() : now.getFullYear() - 1, by = +v.slice(0, 4);
+    var age = sy - by + 1, grade = sy - by - 6;
+    var g = grade >= 7 ? 'teen' : grade >= 1 ? 'elem' : age === 5 ? 'five' : age >= 6 ? 'baby' : 'young';
+    return { g: g, age: age, grade: grade };
+  }
+  function childGroup() { var a = who === 'kids' && childAge(); return a ? a.g : null; }
+  function classFits(kind, g) { return GROUP[g].kinds.indexOf(kind) >= 0; }
+  function ageText(a) {
+    if (!a) return '';
+    if (a.g === 'elem') return '초등 ' + a.grade + '학년';
+    if (a.g === 'teen') return '중학생 이상';
+    return a.age + '세 유아';
+  }
   function matchClasses(day, h) {
-    var five = progValue() === '5세 특별 정규반';
+    var five = progValue() === '5세 특별 정규반', g = childGroup();
+    var kinds = five ? ['5세'] : ['유아', '초등'];
+    if (g) kinds = kinds.filter(function (k) { return classFits(k, g); });
+    if (!kinds.length) return [];
     return CL.filter(function (c) {
-      return c.day === day && c.time === hh(h) && (c.kind === '신규' || (five ? c.kind === '5세' : c.kind === '유아' || c.kind === '초등'));
+      return c.day === day && c.time === hh(h) && (c.kind === '신규' || kinds.indexOf(c.kind) >= 0);
     });
   }
+  function onBirthChange() {
+    var a = childAge(), out = $('kAgeOut');
+    if (!a) { out.className = 'age-out'; out.textContent = '입력하면 유아 · 초등을 자동으로 구분해 맞는 반만 보여드려요'; }
+    else {
+      out.className = 'age-out on g-' + a.g;
+      out.textContent = ageText(a) + ' · ' + GROUP[a.g].fit + ' 대상' + (a.g === 'young' || a.g === 'teen' ? '으로 상담드려요' : '이에요');
+    }
+    // 맞지 않는 희망 시간(다른 연령 반, 초등 전용 특강)은 정리
+    var before = wishes.length;
+    if (a) wishes = wishes.filter(function (w) {
+      if (w.special) return a.g === 'elem';
+      if (w.cid != null) { var c = CL[w.cid]; return c.kind === '신규' || classFits(c.kind, a.g); }
+      return true;
+    });
+    renderTimeOpts();
+    if (wishes.length !== before) { renderWish(); $('wHint').textContent = '입력한 생년월일과 맞지 않는 희망 시간 ' + (before - wishes.length) + '개를 지웠어요.'; }
+  }
+  $('k-birth').max = today();
+  $('k-birth').addEventListener('change', onBirthChange);
+  $('k-birth').addEventListener('input', onBirthChange);
   function slotStatus(day, h) {
     var mode = progMode();
     if (mode === 'private') {
@@ -393,6 +446,12 @@
       : '<option value="">평일과 토요일은 시간이 달라요 · 따로 추가해 주세요</option>';
     $('wTime').disabled = !hs.length;
     $('wHint').textContent = HINT[progMode()] + (mixed && hs.length ? ' 평일과 토요일에 모두 가능한 시간만 보여요.' : '');
+    var g = childGroup(), pv = progValue();
+    if (g && progMode() === 'regular') {
+      if (!GROUP[g].kinds.length) $('wHint').textContent = '입력한 생년월일 기준으로는 정규반 대상이 아니에요. 개인 · 듀엣 · 트리오 레슨으로 상담해 주세요.';
+      else if (pv === '5세 특별 정규반' && g !== 'five') $('wHint').textContent = '5세 특별반은 5세 친구들 대상이에요. 키즈 정규반(4:1)을 선택해 주세요.';
+      else $('wHint').textContent = ageText(childAge()) + ' 기준 ' + (pv === '5세 특별 정규반' ? '5세 특별반' : GROUP[g].label + ' 정규반') + ' 여석만 보여드려요. ' + HINT.regular;
+    }
     renderStatus();
   }
   $('wTime').addEventListener('change', renderStatus);
@@ -467,7 +526,7 @@
     if (who === 'kids') {
       var shuttle = radio('shuttle') === '이용' ? '이용 (픽업 장소: ' + (val('k-pickup') || '상담 시 안내') + ')' : '미이용';
       var b = '[다이나믹웨이브 불당점 대기접수 · 유아/어린이]\n' +
-        '1. 아동명 / 나이 : ' + val('k-name') + ' / ' + (val('k-age') || '-') + '\n' +
+        '1. 아동명 / 생년월일 : ' + val('k-name') + ' / ' + (val('k-birth') ? val('k-birth').replace(/-/g, '.') + ' (' + ageText(childAge()) + ')' : '-') + '\n' +
         '2. 보호자 연락처 : ' + val('f-phone') + '\n' +
         '3. 희망 프로그램 : ' + p + '\n' +
         '4. 희망 요일·시간·주 횟수 :' + w + '\n' +
