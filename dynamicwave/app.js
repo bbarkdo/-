@@ -2,19 +2,20 @@
   'use strict';
   var D = window.DW, info = D.info;
   var DAYS = ['월', '화', '수', '목', '금', '토'];
-  var TYPE_LABEL = { baby: '유아반', elem: '초등반', private: '개인·소그룹', adult: '성인반' };
+  var KIND = { '5세': { cls: 'five', name: '5세 특별반' }, '유아': { cls: 'baby', name: '유아 정규반' }, '초등': { cls: 'elem', name: '초등 정규반' } };
   var $ = function (id) { return document.getElementById(id); };
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function today() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function fmtDate(s) { var p = s.split('-'); return +p[1] + '월 ' + +p[2] + '일'; }
-  function endTime(t, mins) { var p = t.split(':'), m = +p[0] * 60 + +p[1] + mins; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+  function won(n) { return n.toLocaleString('ko-KR'); }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 
   // 남은 자리 → 상태
   function seat(cap, cur) {
     var left = cap - cur;
     if (left <= 0) return { k: 'full', left: 0, txt: '마감 · 대기 접수' };
+    if (cur === 0) return { k: 'new', left: left, txt: '신규 모집 · ' + left + '자리' };
     if (left === 1) return { k: 'few', left: 1, txt: '1자리 남음' };
     return { k: 'open', left: left, txt: left + '자리 남음' };
   }
@@ -28,9 +29,20 @@
   $('iTel').textContent = info.tel;
   $('iAddr').textContent = info.address;
   $('iPark').textContent = info.parking;
-  $('iHours').innerHTML = info.hours.map(function (h) { return '<li><b>' + esc(h[0]) + '</b> ' + esc(h[1]) + '</li>'; }).join('');
+  $('iHours').innerHTML = info.hours.map(function (h) {
+    return '<li><b>' + esc(h[0]) + '</b> ' + esc(h[1]) + (h[2] ? '<small>' + esc(h[2]) + '</small>' : '') + '</li>';
+  }).join('');
   $('fInfo').textContent = info.name + ' · ' + info.address + ' · ' + info.tel;
   if (info.kakao) { $('kakaoBtn').href = info.kakao; $('kakaoBtn').hidden = false; }
+  if (info.instagram) $('iInsta').href = info.instagram; else $('iInsta').hidden = true;
+  if (info.blog) $('iBlog').href = info.blog; else $('iBlog').hidden = true;
+  var q = encodeURIComponent(info.address.split(',')[0]);
+  $('mapFrame').src = 'https://maps.google.com/maps?q=' + q + '&hl=ko&z=17&output=embed';
+  $('mapGo').href = 'https://map.naver.com/p/search/' + q;
+  $('copyAddr').addEventListener('click', function () {
+    var b = this;
+    try { navigator.clipboard.writeText(info.address).then(function () { b.textContent = '복사됨'; }); } catch (e) { /* 복사 미지원 브라우저 */ }
+  });
 
   /* ---------- 메뉴 ---------- */
   var menuBtn = $('menuBtn'), nav = $('nav');
@@ -40,38 +52,43 @@
   nav.addEventListener('click', function (e) { if (e.target.tagName === 'A') { nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', false); } });
 
   /* ---------- 시간표 ---------- */
-  var tt = { f: 'all', open: false, day: DAYS[(new Date().getDay() + 6) % 7] || '월' };
-  if (DAYS.indexOf(tt.day) < 0) tt.day = '월';
-  D.classes.forEach(function (c, i) { c.id = i; c.s = seat(c.cap, c.cur); });
+  var tt = { f: 'all', open: false, day: DAYS[(new Date().getDay() + 6) % 7] };
+  if (!tt.day) tt.day = '월';
+  // [요일, 시간, 수조, 반, 단계, 인원, (정원)] → 객체
+  var CL = D.classes.map(function (r, i) {
+    var k = KIND[r[3]], cap = r[6] || D.cap[r[3]];
+    return { id: i, day: r[0], time: r[1], room: r[2], kind: r[3], cls: k.cls, name: k.name, level: r[4], cap: cap, cur: r[5], s: seat(cap, r[5]) };
+  });
   $('ttUpdated').textContent = fmtDate(D.updated) + ' 기준 여석';
 
-  function visible(c) { return (tt.f === 'all' || c.type === tt.f) && (!tt.open || c.s.k !== 'full'); }
+  function visible(c) { return (tt.f === 'all' || c.kind === tt.f) && (!tt.open || c.s.k !== 'full'); }
+  function sub(c) { return (c.level ? c.level + ' · ' : '') + c.room + '호실'; }
   function clsBtn(c, mobile) {
-    var days = c.days.join('/') + (c.days.length > 1 ? ' · 주 ' + c.days.length + '회' : '');
-    return '<button type="button" class="cls t-' + c.type + (c.s.k === 'full' ? ' is-full' : '') + '" data-id="' + c.id + '" ' +
-      'aria-label="' + esc(c.name + ' ' + days + ' ' + c.time + ', ' + c.s.txt + ', 누르면 상담 신청서에 추가') + '">' +
-      (mobile ? '<span class="tm">' + c.time + '</span><span><span class="cn">' + esc(c.name) + '</span><span class="cl">' + esc(c.level) + ' · ' + days + '</span></span>' + badge(c.s)
-              : '<span class="cn">' + esc(c.name) + '</span><span class="cl">' + esc(c.level) + '</span>' + badge(c.s)) +
+    return '<button type="button" class="cls t-' + c.cls + (c.s.k === 'full' ? ' is-full' : '') + '" data-id="' + c.id + '" ' +
+      'aria-label="' + esc(c.day + '요일 ' + c.time + ' ' + c.name + ' ' + sub(c) + ', ' + c.s.txt + ', 누르면 상담 신청서에 추가') + '">' +
+      (mobile ? '<span class="tm">' + c.time + '</span><span><span class="cn">' + esc(c.name) + '</span><span class="cl">' + esc(sub(c)) + '</span></span>' + badge(c.s)
+              : '<span class="cn">' + esc(c.name) + '</span><span class="cl">' + esc(sub(c)) + '</span>' + badge(c.s)) +
       '</button>';
   }
+  function byTime(a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : a.room - b.room; }
   function renderTT() {
-    var list = D.classes.filter(visible);
-    var times = D.classes.map(function (c) { return c.time; }).filter(function (t, i, a) { return a.indexOf(t) === i; }).sort();
+    var list = CL.filter(visible);
+    var times = CL.map(function (c) { return c.time; }).filter(function (t, i, a) { return a.indexOf(t) === i; }).sort();
     // PC 표
     var h = '<thead><tr><th>시간</th>' + DAYS.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr></thead><tbody>';
     times.forEach(function (t) {
       var row = DAYS.map(function (d) {
-        return '<td>' + list.filter(function (c) { return c.time === t && c.days.indexOf(d) >= 0; }).map(function (c) { return clsBtn(c); }).join('') + '</td>';
+        return '<td>' + list.filter(function (c) { return c.time === t && c.day === d; }).sort(byTime).map(function (c) { return clsBtn(c); }).join('') + '</td>';
       }).join('');
       h += '<tr><td class="time">' + t + '</td>' + row + '</tr>';
     });
     $('ttGrid').innerHTML = h + '</tbody>';
     // 모바일 탭
     $('ttDays').innerHTML = DAYS.map(function (d) {
-      var n = list.filter(function (c) { return c.days.indexOf(d) >= 0 && c.s.k !== 'full'; }).length;
+      var n = list.filter(function (c) { return c.day === d && c.s.k !== 'full'; }).length;
       return '<button type="button" role="tab" aria-selected="' + (d === tt.day) + '" data-d="' + d + '">' + d + '<small>' + (n ? '빈자리 ' + n : '&nbsp;') + '</small></button>';
     }).join('');
-    var dl = list.filter(function (c) { return c.days.indexOf(tt.day) >= 0; }).sort(function (a, b) { return a.time < b.time ? -1 : 1; });
+    var dl = list.filter(function (c) { return c.day === tt.day; }).sort(byTime);
     $('ttList').innerHTML = dl.length ? dl.map(function (c) { return clsBtn(c, true); }).join('') : '<p class="tt-empty">조건에 맞는 수업이 없어요. 대기 접수로 원하는 시간을 남겨주세요!</p>';
     markPicked();
   }
@@ -85,11 +102,11 @@
   $('ttDays').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { tt.day = b.dataset.d; renderTT(); } });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('.cls'); if (!b) return;
-    var c = D.classes[+b.dataset.id];
-    setWho(c.type === 'adult' || /성인/.test(c.name) ? 'adult' : 'kids');
-    var progVal = c.type === 'adult' ? '성인 소그룹' : c.type === 'private' ? '' : '키즈정규반';
-    if (progVal) { var box = who === 'kids' ? $('progKids') : $('progAdult'); var cb = box.querySelector('input[value="' + progVal + '"]'); if (cb) { cb.checked = true; cb.dispatchEvent(new Event('change', { bubbles: true })); } }
-    addWish({ days: c.days.slice(), time: c.time, freq: c.days.length, label: c.name + (c.s.k === 'full' ? ' (대기)' : ''), cid: c.id });
+    var c = CL[+b.dataset.id];
+    setWho('kids');
+    var cb = $('progKids').querySelector('input[value="' + (c.kind === '5세' ? '5세 특별 정규반' : '키즈정규반') + '"]');
+    cb.checked = true; cb.dispatchEvent(new Event('change', { bubbles: true }));
+    addWish({ days: [c.day], time: c.time, freq: 1, label: c.name + (c.level ? '(' + c.level + ')' : ''), wait: c.s.k === 'full', cid: c.id });
     $('consult').scrollIntoView({ behavior: 'smooth' });
   });
   renderTT();
@@ -131,15 +148,32 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
   }
 
-  /* ---------- 가격 ---------- */
-  var pIdx = 0;
+
+  /* ---------- 가격 (1개월 / 3개월 10% 할인 보기) ---------- */
+  var term = 1;
   function renderPrice() {
-    var p = D.prices[pIdx];
-    $('pTabs').innerHTML = D.prices.map(function (x, i) { return '<button type="button" role="tab" aria-selected="' + (i === pIdx) + '" data-i="' + i + '">' + esc(x.label) + '</button>'; }).join('');
-    $('pBody').innerHTML = '<p class="pd">' + esc(p.desc) + '</p><table class="ptable"><thead><tr>' + p.head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') +
-      '</tr></thead><tbody>' + p.rows.map(function (r) { return '<tr>' + r.map(function (v) { return '<td>' + esc(v) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>';
+    var cols = D.priceCols.length;
+    var h = '<table class="ptable"><thead><tr><th class="pt-h">' + (term === 3 ? '3개월권' : '1개월 수강권') + ' <small>(1인 기준)</small></th>' +
+      D.priceCols.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr></thead>';
+    D.prices.forEach(function (sec) {
+      var calc = term === 3 && sec.m3;
+      h += '<tbody><tr class="pt-sec"><th colspan="' + (cols + 1) + '">' + esc(sec.title) + (sec.sub ? ' <small>(' + esc(sec.sub) + ')</small>' : '') + '</th></tr>';
+      sec.rows.forEach(function (r) {
+        var vals = r.slice(1), isTerm = vals.length === cols && calc;
+        h += '<tr><td>' + esc(r[0]) + '</td>' + (vals.length === cols
+          ? vals.map(function (v) { return '<td>' + won(isTerm ? Math.round(v * 3 * 0.9) : v) + '</td>'; }).join('')
+          : '<td colspan="' + cols + '" class="one">' + won(vals[0]) + '</td>') + '</tr>';
+      });
+      h += '</tbody>';
+    });
+    $('pBody').innerHTML = h + '</table>' + (term === 3 ? '<p class="pt-tip">3개월 금액 = 1개월 × 3 × 0.9 (참고용 계산이에요. 정확한 금액은 상담 시 안내드려요.)</p>' : '');
   }
-  $('pTabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { pIdx = +b.dataset.i; renderPrice(); } });
+  $('pTerm').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    term = +b.dataset.m;
+    [].forEach.call(this.children, function (x) { x.setAttribute('aria-selected', x === b); });
+    renderPrice();
+  });
   $('pNotes').innerHTML = D.priceNotes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('');
   renderPrice();
 
@@ -167,17 +201,18 @@
     [].forEach.call(form.querySelectorAll('.only-kids'), function (el) { el.hidden = w !== 'kids'; });
     [].forEach.call(form.querySelectorAll('.only-adult'), function (el) { el.hidden = w !== 'adult'; });
     $('progKids').hidden = w !== 'kids'; $('progAdult').hidden = w !== 'adult';
-    $('regularBox').hidden = !(w === 'kids' && $('kRegular').checked);
+    $('regularBox').hidden = !(w === 'kids' && wantsRegular());
   }
   form.querySelector('.form-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setWho(b.dataset.who); });
-  $('kRegular').addEventListener('change', function () { $('regularBox').hidden = !this.checked; });
+  function wantsRegular() { return !!$('progKids').querySelector('input[data-regular]:checked'); }
+  $('progKids').addEventListener('change', function () { $('regularBox').hidden = !wantsRegular(); });
   form.addEventListener('change', function (e) {
     if (e.target.name === 'shuttle') $('k-pickup').hidden = !$('shY').checked;
   });
 
   // 희망 시간 목록
   var tOpts = '<option value="">시간 선택</option>';
-  for (var m = 9 * 60; m <= 21 * 60; m += 30) tOpts += '<option>' + pad(Math.floor(m / 60)) + ':' + pad(m % 60) + '</option>';
+  for (var m = 6 * 60; m <= 21 * 60; m += 30) tOpts += '<option>' + pad(Math.floor(m / 60)) + ':' + pad(m % 60) + '</option>';
   $('wTime').innerHTML = tOpts + '<option value="시간 무관">시간 무관</option>';
   function wishText(w) {
     return w.text || (w.days.join('/') + ' ' + w.time + (w.label ? ' ' + w.label : ''));
@@ -194,7 +229,7 @@
     l.innerHTML = wishes.map(function (w, i) {
       var freq = w.text ? '' : '<select class="freq" data-i="' + i + '" aria-label="주 수업 횟수">' +
         [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === w.freq ? ' selected' : '') + '>주 ' + n + '회</option>'; }).join('') + '</select>';
-      return '<li><span class="wl">' + (i + 1) + '순위 · ' + esc(wishText(w)) + '</span>' + freq + '<button type="button" class="x" data-i="' + i + '" aria-label="삭제">×</button></li>';
+      return '<li><span class="wl">' + (i + 1) + '순위 · ' + esc(wishText(w)) + (w.wait ? ' <small>(대기)</small>' : '') + '</span>' + freq + '<button type="button" class="x" data-i="' + i + '" aria-label="삭제">×</button></li>';
     }).join('');
     markPicked();
   }
@@ -220,7 +255,7 @@
 
   function buildBody() {
     var p = progs().join(', ') || '상담 후 결정';
-    var w = wishes.length ? wishes.map(function (x) { return '\n - ' + wishText(x) + (x.text ? '' : ' 주 ' + x.freq + '회'); }).join('') : ' 상담 후 결정';
+    var w = wishes.length ? wishes.map(function (x) { return '\n - ' + wishText(x) + (x.text ? '' : ' 주 ' + x.freq + '회') + (x.wait ? ' (대기 접수)' : ''); }).join('') : ' 상담 후 결정';
     var memo = val('f-memo') || '없음';
     if (who === 'kids') {
       var shuttle = radio('shuttle') === '이용' ? '이용 (픽업 장소: ' + (val('k-pickup') || '상담 시 안내') + ')' : '미이용';
@@ -232,7 +267,7 @@
         '5. 선호 개월수 : ' + radio('months') + '\n' +
         '6. 셔틀 이용 : ' + shuttle + '\n' +
         '7. 기타 요청 사항 : ' + memo;
-      if ($('kRegular').checked) b += '\n※ 정규반 · 수영 강습 경험 : ' + (radio('k-exp') || '-') + ' / 현재 진도 : ' + (val('k-level') || '-');
+      if (wantsRegular()) b += '\n※ 정규반 · 수영 강습 경험 : ' + (radio('k-exp') || '-') + ' / 현재 진도 : ' + (val('k-level') || '-');
       return b;
     }
     return '[다이나믹웨이브 불당점 대기접수 · 성인]\n' +
