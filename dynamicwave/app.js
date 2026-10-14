@@ -423,8 +423,8 @@
   $('progKids').addEventListener('click', function (e) { var l = e.target.closest('label'); if (l && !l.querySelector('input').disabled) autoProg = false; });
   var PROG_NOTE = {
     five: '5세(만 48개월 이상)는 안전을 위해 5세 특별반만 선택할 수 있어요.',
-    baby: '6세 이상은 키즈 정규반(4:1)으로 신청해요. 5세 특별반은 5세 친구들 반이에요.',
-    elem: '초등학생은 키즈 정규반(4:1)으로 신청해요.',
+    baby: '6세 이상은 키즈 정규반(최대 4명)으로 신청해요. 5세 특별반은 5세 친구들 반이에요.',
+    elem: '초등학생은 키즈 정규반(최대 4명)으로 신청해요.',
     young: '만 48개월 미만은 개인 · 듀엣 · 트리오 레슨으로 신청해 주세요.',
     teen: '중학생 이상은 개인 · 듀엣 · 트리오 레슨으로 신청해 주세요.'
   };
@@ -513,8 +513,8 @@
     if (g && progMode() === 'regular') {
       if (g === 'young') $('wHint').textContent = '정규반은 만 48개월(5세)부터 등록할 수 있어요. 그 전에는 개인 · 듀엣 · 트리오 레슨을 선택해 주세요.';
       else if (!GROUP[g].kinds.length) $('wHint').textContent = '입력한 생년월일 기준으로는 정규반 대상이 아니에요. 개인 · 듀엣 · 트리오 레슨으로 상담해 주세요.';
-      else if (pv === '키즈정규반' && g === 'five') $('wHint').textContent = '5세(만 48개월 이상)는 안전을 위해 5세 특별반으로만 등록해요. 5세 특별반(3:1)을 선택해 주세요.';
-      else if (pv === '5세 특별 정규반' && g !== 'five') $('wHint').textContent = '5세 특별반은 5세(만 48개월 이상) 친구들 대상이에요. 키즈 정규반(4:1)을 선택해 주세요.';
+      else if (pv === '키즈정규반' && g === 'five') $('wHint').textContent = '5세(만 48개월 이상)는 안전을 위해 5세 특별반으로만 등록해요. 5세 특별반(최대 3명)을 선택해 주세요.';
+      else if (pv === '5세 특별 정규반' && g !== 'five') $('wHint').textContent = '5세 특별반은 5세(만 48개월 이상) 친구들 대상이에요. 키즈 정규반(최대 4명)을 선택해 주세요.';
       else $('wHint').textContent = ageText(childAge()) + ' 기준 ' + (pv === '5세 특별 정규반' ? '5세 특별반' : GROUP[g].label + ' 정규반') + ' 여석만 보여드려요. ' + HINT.regular;
     }
     renderStatus();

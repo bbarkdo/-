@@ -647,3 +647,6 @@ a.extra:hover { transform: translateY(-2px); }
 .pill b { color: var(--coral); }
 @media (max-width: 400px) { .logo-txt b { font-size: 19px; } .branch { font-size: 15px; padding: 3px 7px 2px; } .logo-txt small { font-size: 10px; } }
 @media (max-width: 560px) { .ribbon { font-size: 13px; padding: 8px 12px; gap: 8px; } .ribbon-tag { display: none; } }
+.hero-points { gap: 8px; }
+.hero-points li { padding: 9px 13px; }
+.hero-points b { font-size: 20px; }
