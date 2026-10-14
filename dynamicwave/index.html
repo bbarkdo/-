@@ -222,15 +222,15 @@
         <article class="prog t-private">
           <span class="prog-age">유아 · 초등 · 성인</span>
           <h3>프라이빗 레슨</h3>
-          <p>개인 1:1 · 듀엣 1:2 · 트리오 1:3. 형제나 친구, 가족과 함께 원하는 시간에 맞춰 진행해요. 만 48개월 미만 아이는 개인 레슨으로 시작해요 (대소변 가리기 필수 · 기저귀 착용 불가).</p>
+          <p>키즈는 개인 1:1 · 듀엣 · 트리오, 성인은 개인 1:1 · 듀엣 2:1로 진행해요. 형제나 친구, 가족과 함께 원하는 시간에 맞춰 진행해요. 만 48개월 미만 아이는 개인 레슨으로 시작해요 (대소변 가리기 필수 · 기저귀 착용 불가).</p>
           <ul><li>시간 협의</li><li>성인 가능</li><li>집중 진도</li></ul>
           <p class="prog-note">성인 레슨: 평일 06~13시 · 19~21시 시작 / 토 09~13시 시작</p>
           <p class="prog-note muted">올케어 · 셔틀은 정규반 전용이라 프라이빗 레슨에는 포함되지 않아요.</p>
         </article>
       </div>
       <div class="extra-row">
-        <div class="extra"><b>🏊 자유수영</b><span>회원 2만 원 · 비회원 3만 원 (1인 50분)</span></div>
-        <div class="extra"><b>🎉 수영장 대관</b><span>10인 60분 25만 원 · 생일파티, 가족 모임</span></div>
+        <a class="extra" href="#consult" data-open="free"><b>🏊 자유수영 · 네이버 예약</b><span>회원 2만 원 · 비회원 3만 원 (1인 50분) · 초등학생 이하는 성인 동반 입수 필수</span></a>
+        <a class="extra" href="#consult" data-open="rent"><b>🎉 수영장 대관 · 별도 협의</b><span>10인 60분 25만 원 · 생일파티, 가족 모임 · 대관 문의 →</span></a>
         <div class="extra"><b>🐣 체험 수업</b><span>1회 5만 원 · 등록 전 먼저 경험해 보세요</span></div>
       </div>
       <ol class="steps" aria-label="진도 단계">
@@ -303,10 +303,10 @@
       <!-- 성인 · 개인레슨: 시간대별 카드 (예약 현황은 data.js의 privateBooked로 계산) -->
       <div id="ttAdultPane" hidden>
         <div class="ad-intro">
-          <p><b>성인 레슨</b>은 개인 1:1 · 듀엣 1:2 · 트리오 1:3으로, 원하는 요일과 시간을 정해 꾸준히 배워요. 키즈 개인 · 듀엣 · 트리오도 같은 시간대에 예약해요.</p>
+          <p><b>성인 레슨</b>은 개인 1:1 · 듀엣 2:1로, 원하는 요일과 시간을 정해 꾸준히 배워요. 키즈 개인 · 듀엣 · 트리오도 같은 시간대에 예약해요.</p>
         </div>
         <div class="ad-bands" id="adBands"></div>
-        <p class="ad-foot"><span id="adUpdated"></span> · 14~18시는 어린이 정규반 시간이에요 · 🏊 자유수영도 가능해요 (회원 20,000원 · 비회원 30,000원, 1인 50분)</p>
+        <p class="ad-foot"><span id="adUpdated"></span> · 14~18시는 어린이 정규반 시간이에요 · 🏊 자유수영은 <a href="#consult" data-open="free">네이버 예약</a>으로 받아요 (초등학생 이하는 성인 동반 필수)</p>
         <p class="tt-caution">⚠️ 예약 현황은 참고용이에요. 강사 일정에 따라 달라질 수 있어 상담 후 확정됩니다. 원하시는 요일 · 시간을 2~3개 적어주시면 더 빨리 잡아드려요.</p>
       </div>
     </div>
@@ -427,6 +427,8 @@
       <details class="qa"><summary>방문 상담은 바로 가면 되나요?</summary><p>모든 상담은 <b>예약제</b>예요. 오전 시간에는 상시 오픈이 아니라 강습 · 자유수영 · 상담 예약이 있을 때만 운영해서, 예약 없이 오시면 상담이 어렵거나 기다리실 수 있어요. 문자나 전화로 먼저 연락 주세요.</p></details>
       <details class="qa"><summary>성인도 배울 수 있나요?</summary><p>네. 성인은 개인 · 듀엣 · 트리오 레슨으로 진행해요. 평일은 <b>06:00~13:00</b>, <b>19:00~21:00</b> 시작 수업, 토요일은 <b>09:00~13:00</b> 시작 수업이 가능해요. 토요일 그 외 시간은 강사와 협의해 가능 여부를 확인해 드려요.</p></details>
       <details class="qa"><summary>셔틀은 어디까지 다니나요?</summary><p>셔틀은 <b>정규반(5세 특별반 · 4:1 정규반) 회원</b>만 이용할 수 있고, <b>천안 불당동 내에서만</b> 운행해요(월 10,000원). 개인 · 듀엣 · 트리오 레슨은 셔틀 이용이 어려워요. 픽업 장소와 시간은 상담 시 안내드려요.</p></details>
+      <details class="qa"><summary>자유수영은 어떻게 이용하나요?</summary><p>자유수영은 <b>네이버 예약</b>으로 받아요 (회원 20,000원 · 비회원 30,000원, 1인 50분). <b>초등학생 이하 어린이는 혼자 이용할 수 없고, 반드시 성인 보호자가 함께 입수</b>해야 해요. 보호자가 밖에서 지켜보는 것만으로는 이용이 어려워요. <a href="#consult" data-open="free">예약 안내 보기</a></p></details>
+      <details class="qa"><summary>수영장 대관도 되나요?</summary><p>네. 기본 10인 · 60분 250,000원이고, 날짜와 시간은 <b>별도 협의 후 확정</b>돼요. 상담 신청의 <a href="#consult" data-open="rent">대관 탭</a>에서 희망 날짜와 인원을 남겨주세요.</p></details>
       <details class="qa"><summary>할인이 있나요?</summary><p>3개월권 등록 시 10%, 가족 동반 등록이나 친구 소개 시 5% 추가 할인이 있어요.</p></details>
     </div>
   </section>
@@ -456,8 +458,44 @@
           <div class="seg form-tabs" role="tablist" aria-label="대상">
             <button type="button" role="tab" data-who="kids" aria-selected="true">👶 유아 · 어린이</button>
             <button type="button" role="tab" data-who="adult" aria-selected="false">🙋 성인</button>
+            <button type="button" role="tab" data-who="free" aria-selected="false">🏊 자유수영</button>
+            <button type="button" role="tab" data-who="rent" aria-selected="false">🎉 대관</button>
           </div>
 
+          <!-- 자유수영: 네이버 예약으로 안내 -->
+          <div class="tab-pane" id="freePane" hidden>
+            <div class="fp-head"><b>자유수영은 네이버 예약으로 받아요</b><span>회원 20,000원 · 비회원 30,000원 (1인 50분)</span></div>
+            <div class="fp-warn">
+              <b>👨‍👧 초등학생 이하 어린이는 혼자 이용할 수 없어요</b>
+              <p>반드시 <b>성인 보호자가 함께 입수</b>해야 이용할 수 있어요. 보호자가 밖에서 지켜보는 것만으로는 이용이 어려워요.</p>
+            </div>
+            <ul class="fp-list">
+              <li>레슨이 없는 시간에 이용할 수 있어요.</li>
+              <li>몸에 딱 붙는 일반 수영복 · 일반 수경 · 수모(필수)를 준비해 주세요. <a href="#swimwear">자세히</a></li>
+              <li>1인 추가 시 인당 10,000원 추가 (현장 결제)</li>
+            </ul>
+            <a class="btn btn-naver block" id="naverBtn" href="#" target="_blank" rel="noopener">N 네이버 예약 바로가기</a>
+          </div>
+
+          <!-- 대관: 별도 협의 문의 -->
+          <div class="tab-pane" id="rentPane" hidden>
+            <div class="fp-head"><b>수영장 대관은 별도 협의 후 확정돼요</b><span>기본 10인 · 60분 250,000원 · 1인 추가 시 인당 10,000원</span></div>
+            <div class="row2">
+              <div class="field"><label for="r-name">신청자 성함</label><input id="r-name" autocomplete="name" placeholder="홍길동"></div>
+              <div class="field"><label for="r-phone">연락처</label><input id="r-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></div>
+            </div>
+            <div class="row2">
+              <div class="field"><label for="r-date">희망 날짜</label><input id="r-date" type="date"></div>
+              <div class="field"><label for="r-time">희망 시작 시간</label><select id="r-time"></select></div>
+            </div>
+            <div class="field"><label for="r-people">예상 인원 <small>(성인 · 어린이 포함)</small></label><input id="r-people" inputmode="numeric" placeholder="예: 성인 4명 · 어린이 6명"></div>
+            <div class="field"><span class="lbl">이용 목적</span>
+              <div class="radio-row"><label><input type="radio" name="r-purpose" value="생일파티"><span>생일파티</span></label><label><input type="radio" name="r-purpose" value="가족 모임"><span>가족 모임</span></label><label><input type="radio" name="r-purpose" value="단체 · 기관"><span>단체 · 기관</span></label><label><input type="radio" name="r-purpose" value="기타"><span>기타</span></label></div>
+            </div>
+            <div class="field"><label for="r-memo">요청 사항 <small>(선택)</small></label><textarea id="r-memo" placeholder="예: 케이크 반입 가능 여부, 대체 가능한 날짜"></textarea></div>
+          </div>
+
+          <div id="lessonFields">
           <!-- 1. 이름 -->
           <div class="row2 only-kids">
             <div class="field"><label for="k-name"><b>1</b>아동 이름</label><input id="k-name" autocomplete="off" placeholder="홍길동"></div>
@@ -494,12 +532,8 @@
             </div>
             <p class="prog-lock" id="progNote" hidden></p>
             <div class="checks" id="progAdult" hidden>
-              <label><input type="radio" name="progA" value="개인" data-mode="private"><span>개인 1:1</span></label>
-              <label><input type="radio" name="progA" value="듀엣" data-mode="private"><span>듀엣 1:2</span></label>
-              <label><input type="radio" name="progA" value="트리오" data-mode="private"><span>트리오 1:3</span></label>
-              <label><input type="radio" name="progA" value="자유수영" data-mode="private"><span>자유수영</span></label>
-              <label><input type="radio" name="progA" value="수영장 대관" data-mode="any"><span>대관 문의</span></label>
-              <label><input type="radio" name="progA" value="체험 수업" data-mode="private"><span>체험 수업</span></label>
+              <label><input type="radio" name="progA" value="개인 1:1" data-mode="private"><span>개인 1:1</span></label>
+              <label><input type="radio" name="progA" value="듀엣 2:1" data-mode="private"><span>듀엣 2:1</span></label>
             </div>
           </fieldset>
 
@@ -549,8 +583,9 @@
 
           <!-- 7. 기타 -->
           <div class="field"><label for="f-memo"><b>7</b>기타 요청 사항 <small>(선택)</small></label><textarea id="f-memo" placeholder="예: 형제 2명 같은 시간 희망 / 물을 많이 무서워해요 / 방문 상담 희망"></textarea></div>
+          </div>
 
-          <label class="agree"><input type="checkbox" id="f-agree">상담 연락을 위해 입력한 정보를 수집 · 이용하는 데 동의합니다. (상담 완료 후 파기)</label>
+          <label class="agree" id="agreeRow"><input type="checkbox" id="f-agree">상담 연락을 위해 입력한 정보를 수집 · 이용하는 데 동의합니다. (상담 완료 후 파기)</label>
           <button class="btn btn-main block" type="submit" id="submitBtn">접수 문자 보내기</button>
           <div class="form-msg" id="formMsg" hidden></div>
         </form>

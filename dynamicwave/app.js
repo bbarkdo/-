@@ -300,8 +300,16 @@
   }
 
   function setWho(w) {
-    who = w;
+    // 자유수영 · 대관 탭: 레슨 신청 항목 대신 전용 안내/문의 표시
     [].forEach.call(form.querySelectorAll('.form-tabs button'), function (b) { b.setAttribute('aria-selected', b.dataset.who === w); });
+    $('freePane').hidden = w !== 'free'; $('rentPane').hidden = w !== 'rent';
+    var lesson = w === 'kids' || w === 'adult';
+    $('lessonFields').hidden = !lesson;
+    $('agreeRow').hidden = $('submitBtn').hidden = w === 'free';
+    $('submitBtn').textContent = w === 'rent' ? (IS_MOBILE ? '대관 문의 문자 보내기' : '대관 문의 내용 만들기') : (IS_MOBILE ? '접수 문자 보내기' : '접수 내용 만들기');
+    msg.hidden = true;
+    if (!lesson) { who = w; return; }
+    who = w;
     [].forEach.call(form.querySelectorAll('.only-kids'), function (el) { el.hidden = w !== 'kids'; });
     [].forEach.call(form.querySelectorAll('.only-adult'), function (el) { el.hidden = w !== 'adult'; });
     $('progKids').hidden = w !== 'kids'; $('progAdult').hidden = w !== 'adult';
@@ -577,6 +585,14 @@
   function progs() { return [].slice.call((who === 'kids' ? $('progKids') : $('progAdult')).querySelectorAll('input:checked')).map(function (i) { return i.value; }); }
   function showErr(t) { msg.hidden = false; msg.className = 'form-msg err'; msg.textContent = t; }
 
+  function rentBody() {
+    return '[다이나믹웨이브 불당점 대관 문의]\n' +
+      '1. 신청자 / 연락처 : ' + val('r-name') + ' / ' + val('r-phone') + '\n' +
+      '2. 희망 날짜 · 시간 : ' + val('r-date').replace(/-/g, '.') + ' ' + ($('r-time').value || '시간 협의') + '\n' +
+      '3. 예상 인원 : ' + (val('r-people') || '-') + '\n' +
+      '4. 이용 목적 : ' + (radio('r-purpose') || '-') + '\n' +
+      '5. 요청 사항 : ' + (val('r-memo') || '없음');
+  }
   function buildBody() {
     var p = progs().join(', ') || '상담 후 결정';
     var w = wishes.length ? wishes.map(function (x) { return '\n - ' + wishText(x) + (x.text ? '' : ' 주 ' + x.freq + '회') + (x.wait ? ' (대기 접수)' : x.isNew ? ' (현재 수업 없음 · ' + D.newMin + '인 이상 시 개설)' : ''); }).join('') : ' 상담 후 결정';
@@ -610,11 +626,15 @@
   }
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var name = who === 'kids' ? val('k-name') : val('a-name'), phone = val('f-phone');
+    if (who === 'free') return;
+    var rent = who === 'rent';
+    var name = rent ? val('r-name') : who === 'kids' ? val('k-name') : val('a-name'), phone = rent ? val('r-phone') : val('f-phone');
+    if (rent && !name) return showErr('신청자 성함을 입력해 주세요.');
     if (!name) return showErr(who === 'kids' ? '아동 이름을 입력해 주세요.' : '성함을 입력해 주세요.');
     if (!/^0\d{1,2}-?\d{3,4}-?\d{4}$/.test(phone)) return showErr('연락처를 확인해 주세요. 예: 010-1234-5678');
     if (!$('f-agree').checked) return showErr('개인정보 수집 · 이용에 동의해 주세요.');
-    var body = buildBody(), href = 'sms:' + info.sms + '?&body=' + encodeURIComponent(body);
+    if (rent && !val('r-date')) return showErr('희망 날짜를 골라주세요.');
+    var body = rent ? rentBody() : buildBody(), href = 'sms:' + info.sms + '?&body=' + encodeURIComponent(body);
     msg.hidden = false; msg.className = 'form-msg';
     if (IS_MOBILE) {
       msg.innerHTML = '<b>문자 앱이 열리지 않으면 아래 내용을 ' + esc(info.tel) + '로 보내주세요.</b><pre id="smsText">' + esc(body) + '</pre>' +
@@ -633,6 +653,14 @@
     }
     $('smsCopy').addEventListener('click', function () { copyText(this, body, $('smsText')); });
     msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  // 자유수영 · 대관 탭 준비
+  $('naverBtn').href = info.naverBooking || 'https://map.naver.com/p/search/' + encodeURIComponent('다이나믹웨이브 불당점');
+  $('r-date').min = today();
+  $('r-time').innerHTML = '<option value="">시간 협의</option>' + union(D.privateHours.weekday, D.privateHours.sat).map(function (h) { return '<option>' + hh(h) + '</option>'; }).join('');
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-open]'); if (!a) return;
+    e.preventDefault(); setWho(a.dataset.open); $('consult').scrollIntoView({ behavior: 'smooth' });
   });
   [].forEach.call(document.querySelectorAll(SENT_SEL), splitSentences);
 })();

@@ -22,6 +22,7 @@ window.DW = {
     instagram: 'https://instagram.com/dwave_buldang',
     blog: 'https://blog.naver.com/dwave_buldang',
     kakao: 'https://pf.kakao.com/_YsvDn',
+    naverBooking: '',              // ★ 자유수영 네이버 예약 주소 (비어 있으면 네이버 지도 검색으로 연결)
     shuttle: '천안 불당동 내 운행 · 월 10,000원',
     adultHours: [                  // 성인 레슨 가능 시간 (시작 시각 기준)
       ['평일', '06:00 ~ 13:00 시작 수업', '19:00 ~ 21:00 시작 수업'],
