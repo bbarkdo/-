@@ -516,10 +516,13 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 </style>
 <!-- 방문 분석: Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7K4CBTXKR"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-V7K4CBTXKR');</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+/* 자동화 브라우저(크롤러 · 봇)는 방문 기록에서 제외 */
+window.LD_BOT=!!navigator.webdriver;
+if(!window.LD_BOT){gtag('js',new Date());gtag('config','G-V7K4CBTXKR');}</script>
 <!-- 방문 분석: Microsoft Clarity (화면 녹화 · 히트맵) -->
 <script>
-(function(c,l,a,r,i,t,y){
+if(!window.LD_BOT)(function(c,l,a,r,i,t,y){
   c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
   t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
   y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
@@ -1169,8 +1172,16 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
      방문 분석 — 구글 애널리틱스(GA4) / 네이버 애널리틱스가 연결되면
      전화 · 문자 · 상담 신청 · 이벤트 클릭이 '전환'으로 기록됩니다.
      ========================================================== */
+  var LEAD_EVENTS = { consult_submit: 1, call_click: 1, sms_click: 1, event_sms: 1 };
   function track(name, params) {
-    try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {}
+    if (window.LD_BOT) return;
+    try {
+      if (window.gtag) {
+        window.gtag('event', name, params || {});
+        // GA4 '리드 생성' 보고서용 표준 이벤트 (잠재고객 수에 집계)
+        if (LEAD_EVENTS[name]) window.gtag('event', 'generate_lead', { method: name });
+      }
+    } catch (e) {}
   }
   window.ldTrack = track;
   document.addEventListener('click', function (e) {
@@ -1297,7 +1308,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 <script>
 if (!wcs_add) var wcs_add = {};
 wcs_add["wa"] = "125fd65eb3cd030";
-if (window.wcs) { wcs_do(); }
+if (window.wcs && !navigator.webdriver) { wcs_do(); }
 </script>
 </body>
 </html>

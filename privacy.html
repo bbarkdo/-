@@ -220,6 +220,9 @@ tr:last-child td { border-bottom: 0; }
 
 <!-- 방문 분석: Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7K4CBTXKR"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-V7K4CBTXKR');</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+/* 자동화 브라우저(크롤러 · 봇)는 방문 기록에서 제외 */
+window.LD_BOT=!!navigator.webdriver;
+if(!window.LD_BOT){gtag('js',new Date());gtag('config','G-V7K4CBTXKR');}</script>
 </body>
 </html>
