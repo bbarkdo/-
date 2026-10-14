@@ -639,3 +639,11 @@ br.sb { content: ''; }
 .btn-naver:hover { transform: translateY(-2px); }
 a.extra { text-decoration: none; color: inherit; transition: transform .15s; }
 a.extra:hover { transform: translateY(-2px); }
+
+/* 로고: 지점명(불당점) 강조 */
+.logo-name { display: flex; align-items: center; gap: 6px; }
+.branch { font-style: normal; font-family: var(--head); font-size: 17px; line-height: 1; color: #fff; background: var(--coral); padding: 4px 9px 3px; border-radius: 999px; white-space: nowrap; }
+.foot .branch { background: var(--coral); color: #fff; }
+.pill b { color: var(--coral); }
+@media (max-width: 400px) { .logo-txt b { font-size: 19px; } .branch { font-size: 15px; padding: 3px 7px 2px; } .logo-txt small { font-size: 10px; } }
+@media (max-width: 560px) { .ribbon { font-size: 13px; padding: 8px 12px; gap: 8px; } .ribbon-tag { display: none; } }
