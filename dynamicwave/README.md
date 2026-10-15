@@ -41,7 +41,15 @@
 - 만 48개월 미만: 정규반 버튼이 잠기고 개인 레슨 안내 + 대소변 가리기 · 기저귀 착용 불가 배너 표시 (사전 접수 없음)
 - `preFiveMonths` (기본 3): 48개월이 되기 이 개월 수 안쪽이면 배너에 '수영장으로 바로 문의' 문구 추가
 
+## 공개 주소 · 배포
+- 공개 주소(예정): https://bbarkdo.github.io/dynamicwave-buldang/ — GitHub 저장소 `dynamicwave-buldang`의 GitHub Pages
+- 이 폴더(`dynamicwave/`)의 내용이 그 저장소의 맨 위(루트)에 그대로 들어갑니다.
+- 도메인을 따로 구입하면 `index.html`의 canonical · og 주소, `robots.txt`, `sitemap.xml`의 주소를 새 도메인으로 바꾸고 저장소에 `CNAME` 파일을 추가합니다.
+- 공유 미리보기 이미지: `assets/og-image.jpg` · 개인정보처리방침: `privacy.html`
+
 ## 방학특강 창 (`special`)
+- `mode: 'soon'` → 일정 · 여석은 숨기고 "11월 초 공개 예정" 안내만 표시 (`soonText`, `soonDesc`)
+- 특강을 공개할 때 `mode: 'open'`으로 바꾸고 `period`, `parts`(부별 대상 · 정원)를 채웁니다.
 - `from` ~ `to` 기간에만 자동으로 띠 · 섹션 · 팝업이 나타나고, 기간이 지나면 자동으로 사라집니다.
 - 당장 숨기려면 `show: false`, 팝업만 끄려면 `popup: false`.
 - `parts`에 부(시간)별로 두 수조(`pools`)를 묶어 적어요. 수조마다 `target`(대상), `cap`, `cur`로 여석 표시. 방문자가 "이 시간 신청하기"를 누르면 상담 신청서에 담깁니다.

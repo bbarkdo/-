@@ -10,6 +10,18 @@
 <meta property="og:title" content="다이나믹웨이브 불당점 | 키즈 &amp; 성인 프라이빗 수영장">
 <meta property="og:description" content="최대 4명 소수정원 정규반, 최대 3명 5세 특별반, 개인·듀엣 레슨. 시간표와 남은 자리를 바로 확인하세요.">
 <meta property="og:locale" content="ko_KR">
+<meta property="og:url" content="https://bbarkdo.github.io/dynamicwave-buldang/">
+<meta property="og:image" content="https://bbarkdo.github.io/dynamicwave-buldang/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://bbarkdo.github.io/dynamicwave-buldang/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SportsActivityLocation","name":"다이나믹웨이브 불당점","description":"천안 불당동 키즈 & 성인 프라이빗 수영장","url":"https://bbarkdo.github.io/dynamicwave-buldang/","image":"https://bbarkdo.github.io/dynamicwave-buldang/assets/og-image.jpg","telephone":"+82-10-2752-6218",
+ "address":{"@type":"PostalAddress","streetAddress":"불당25로 23, B126호","addressLocality":"천안시 서북구","addressRegion":"충청남도","addressCountry":"KR"},
+ "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"06:00","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"14:00"}],
+ "sameAs":["https://instagram.com/dwave_buldang","https://blog.naver.com/dwave_buldang","https://pf.kakao.com/_YsvDn"]}
+</script>
 <meta name="theme-color" content="#3BB8F0">
 <link rel="icon" href="assets/logo-mark.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -128,8 +140,12 @@
           <p class="sp-period" id="spPeriod"></p>
           <p class="sp-desc" id="spDesc"></p>
         </div>
+        <div class="sp-soon" id="spSoon" hidden>
+          <p class="sp-soon-badge">📢 <b id="spSoonText"></b></p>
+          <a class="btn kn-kakao" data-kakao href="#" target="_blank" rel="noopener">💬 카카오톡 채널 추가하고 소식 받기</a>
+        </div>
         <div class="sp-list" id="spList"></div>
-        <div class="sp-note">
+        <div class="sp-note" id="spNoteBox">
           <p class="sp-note-head">⚠️ 신청 전 확인해 주세요 <span id="spUpdated"></span></p>
           <ul id="spNote"></ul>
         </div>
@@ -586,7 +602,7 @@
           <div class="field"><label for="f-memo"><b>7</b>기타 요청 사항 <small>(선택)</small></label><textarea id="f-memo" placeholder="예: 형제 2명 같은 시간 희망 / 물을 많이 무서워해요 / 방문 상담 희망"></textarea></div>
           </div>
 
-          <label class="agree" id="agreeRow"><input type="checkbox" id="f-agree">상담 연락을 위해 입력한 정보를 수집 · 이용하는 데 동의합니다. (상담 완료 후 파기)</label>
+          <label class="agree" id="agreeRow"><input type="checkbox" id="f-agree">상담 연락을 위해 입력한 정보를 수집 · 이용하는 데 동의합니다. (상담 완료 후 파기 · <a href="privacy.html" target="_blank" rel="noopener">자세히</a>)</label>
           <button class="btn btn-main block" type="submit" id="submitBtn">접수 문자 보내기</button>
           <div class="form-msg" id="formMsg" hidden></div>
         </form>
@@ -622,7 +638,7 @@
   <div class="wrap foot-in">
     <div class="logo"><img class="logo-mark inv" src="assets/logo-mark.png" alt="" width="40" height="41"><span class="logo-txt"><span class="logo-name"><b>다이나믹웨이브</b><em class="branch">불당점</em></span><small>천안 불당동</small></span></div>
     <p id="fInfo"></p>
-    <p class="copy">© 다이나믹웨이브 불당점</p>
+    <p class="copy">© 다이나믹웨이브 불당점 · <a href="privacy.html">개인정보처리방침</a></p>
   </div>
 </footer>
 

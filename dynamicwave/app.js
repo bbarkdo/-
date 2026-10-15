@@ -212,6 +212,19 @@
   /* ---------- 방학특강 ---------- */
   var sp = D.special, td = today();
   var spOn = sp && sp.show && td >= sp.from && td <= sp.to;
+  // 공개 예정: 일정 · 여석 · 신청은 숨기고 '11월 초 공개 예정'만 안내 (팝업 없음)
+  if (spOn && sp.mode === 'soon') {
+    $('special').hidden = false; $('navSp').hidden = false; $('spRibbon').hidden = false;
+    $('spRibbonTag').textContent = sp.badge;
+    $('spRibbonTxt').textContent = '초등 겨울방학 특강 · ' + sp.soonText;
+    $('spBadge').textContent = sp.badge;
+    $('spTitle').textContent = '초등 겨울방학 특강, ' + sp.soonText;
+    $('spPeriod').hidden = true;
+    $('spDesc').textContent = sp.soonDesc;
+    $('spSoonText').textContent = sp.soonText;
+    $('spSoon').hidden = false; $('spList').hidden = true; $('spNoteBox').hidden = true;
+    spOn = false;
+  }
   if (spOn) {
     var spSlots = [];   // 버튼 번호 → { part, pool }
     sp.parts.forEach(function (pt) { pt.pools.forEach(function (pl) { pl.s = seat(pl.cap, pl.cur); spSlots.push({ part: pt, pool: pl }); }); });
