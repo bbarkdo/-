@@ -7,19 +7,21 @@
 
 ## 매달 이벤트 바꾸는 법
 
-`index.html`에서 `var EVENT = {` 부분만 수정합니다.
+`index.html`에서 `var EVENT = {` 부분만 수정합니다. `end`가 지나면 상단 띠, 메뉴, 이벤트 섹션, 첫 화면 프로모 카드, 사이트 스킨이 모두 자동으로 원래대로 돌아갑니다.
 
-- `end`: 종료 일시. 이 시각이 지나면 상단 띠, 메뉴의 '이벤트', 이벤트 섹션이 자동으로 숨겨집니다.
+- `end`: 종료 일시
+- `nav`: 메뉴에 보일 이름 (예: 'BLACK FRIDAY', 비우면 '이벤트')
+- `skin`: 기간 중 사이트 전체 테마. `'bf'` = 블랙 + 옐로 (CSS `html.skin-bf`). 비우면 기본 디자인
 - `ribbon` / `ribbonShort`: 상단 띠 문구 (PC / 모바일)
-- `badge`, `hook`, `title`, `sub`: 배지, 윗줄, 제목, 설명. 강조할 단어는 `<em>…</em>`으로 감쌉니다.
-- `offers`: 상품 목록. 상품마다 `name`(이름), `sessions`(횟수), `price`(이벤트 총액), `regularPer`(정가 회당 단가). 회당 금액과 할인율은 자동 계산됩니다(할인율은 내림).
-- `vat`, `basis`: 부가세 표기, 정가 기준 안내
-- `items`: 혜택 칩, `limit`: 빨간 배지(예: '선착순 · 2자리 남음', 비우면 숨김), `note`: 하단 안내
-- `flyer`, `flyerAlt`: 전단지 이미지 경로(`assets/`)와 설명
-- `theme`: 전단지에 맞춘 색. 비우면 기본 블랙 + 레드
+- `badge`, `limit`, `hook`, `title`, `sub`: 이벤트 섹션 배지, 조건 배지, 윗줄, 제목(`<em>` 강조), 설명
+- `offers`: 상품 카드. `tag`, `title`(HTML, `<mark>` 강조), `short`(요약명), `sessions`, `price`(VAT 별도, 원), `vatIncl`(부가세 포함, 원), `perks`, `compare`(정상가 비교 문구), `desc`, `chip`(신청서 체크할 항목 id, 쉼표 구분), `wide`(가로 전체 카드), `kicker`(카드 위 라벨). 회당 금액은 자동 계산
+- `notes`: 하단 ※ 안내 (앞에 `!`를 붙이면 굵게)
+- `hero`: 첫 화면 프로모 카드 (`kicker`, `title`, `note`). 비우면 기본 'First Visit' 카드
+- `flyer`, `flyerAlt`: 전단지 이미지와 설명
+- `theme`: 이벤트 섹션·띠 색
 
-전단지 QR이 `?utm_source=flyer`로 들어오면 상담 신청서에 이벤트 항목이 자동으로 체크됩니다.
-예: `https://lifedirector.kr/?utm_source=flyer#trialForm` (10월 신규 회원 전단지 QR)
+각 상품 카드의 '이 혜택으로 상담받기'는 신청서 메모에 상품을 자동 입력합니다(GA4 `event_offer_cta`).
+전단지 QR이 `?utm_source=flyer`로 들어오면 신청서에 이벤트 항목이 자동 체크됩니다.
 
 ## 방문 분석
 
