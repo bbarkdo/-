@@ -285,6 +285,10 @@ p { margin: 0; }
 .pc .cnt small { font: 500 13px var(--f-body); color: var(--muted); margin-left: 4px; }
 .pc .per { font: 800 clamp(24px, 2.6vw, 30px)/1.1 var(--f-display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; margin-top: 10px; }
 .pc .per small { font: 500 13px var(--f-body); color: var(--muted); letter-spacing: 0; margin-left: 2px; }
+.pc-cta { margin-top: 10px; width: 100%; min-height: 40px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font: 700 13.5px var(--f-body); cursor: pointer; transition: background .15s ease; }
+.pc-cta:hover { background: var(--soft); }
+.pc.best .pc-cta { background: var(--accent); color: var(--accent-ink); }
+.form.pulse { box-shadow: 0 0 0 3px var(--accent); transition: box-shadow .3s ease; }
 .pc .tot { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 10px; margin-top: 6px; border-top: 1px solid var(--line); }
 .pc .tot b { color: var(--ink); font-weight: 700; }
 .p-notes { margin: 22px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
@@ -1054,12 +1058,17 @@ if(!window.LD_BOT)(function(c,l,a,r,i,t,y){
   var tabs = document.querySelectorAll('#pTabs button'), tierEl = document.getElementById('pTier');
   var bodyEl = document.getElementById('pBody'), descEl = document.getElementById('pDesc');
 
-  function card(r, pair) {
+  var CAT = { pt1: ['PT 1:1', 'f-p1'], pt2: ['PT 2:1', 'f-p2'], pil: ['필라테스 1:1', 'f-p3'], gym: ['헬스 회원권', 'f-p6'] };
+  function cta(product, chip, am) {
+    return '<button type="button" class="pc-cta" data-product="' + product + '" data-chip="' + chip + '"' + (am ? ' data-am="1"' : '') + '>이 상품으로 상담받기</button>';
+  }
+  function card(r, pair, ctx) {
     var per = r[2] / r[0], exact = per % 10 === 0, perTxt = (exact ? '' : '약 ') + won(exact ? per : Math.round(per / 100) * 100);
     return '<article class="pc' + (r[3] ? ' best' : '') + '">' + (r[3] ? '<span class="best-tag">BEST</span>' : '') +
       '<p class="cnt">' + r[0] + '회<small>' + r[1] + '일</small></p>' +
       '<p class="per">' + perTxt + '<small>원 / 회' + (pair ? ' (2인)' : '') + '</small></p>' +
-      '<p class="tot">총 <b>' + won(r[2]) + '</b>원' + (pair ? ' · 1인 ' + won(r[2] / 2) + '원' : '') + '</p></article>';
+      '<p class="tot">총 <b>' + won(r[2]) + '</b>원' + (pair ? ' · 1인 ' + won(r[2] / 2) + '원' : '') + '</p>' +
+      cta(ctx.name + ' · ' + ctx.tier + ' · ' + r[0] + '회(' + r[1] + '일) 총 ' + won(r[2]) + '원', ctx.chip, ctx.am) + '</article>';
   }
   function render() {
     var d = PRICE[state.k];
@@ -1070,7 +1079,7 @@ if(!window.LD_BOT)(function(c,l,a,r,i,t,y){
       bodyEl.innerHTML = '<div class="p-grid cols-3">' + d.membership.map(function (m) {
         return '<article class="pc' + (m[3] ? ' best' : '') + '">' + (m[3] ? '<span class="best-tag">BEST</span>' : '') +
           '<p class="cnt">' + m[0] + '</p><p class="per">' + won(m[2] / m[1]) + '<small>원 / 월</small></p>' +
-          '<p class="tot">총 <b>' + won(m[2]) + '</b>원</p></article>';
+          '<p class="tot">총 <b>' + won(m[2]) + '</b>원</p>' + cta('헬스 회원권 · ' + m[0] + ' 총 ' + won(m[2]) + '원', 'f-p6') + '</article>';
       }).join('') + '</div>';
       return;
     }
@@ -1081,12 +1090,30 @@ if(!window.LD_BOT)(function(c,l,a,r,i,t,y){
     }).join('');
     bodyEl.innerHTML = d.tiers[state.t].groups.map(function (g) {
       return '<div class="p-group">' + (g.title ? '<h3>' + g.title + '</h3>' : '') +
-        '<div class="p-grid' + (g.rows.length === 2 ? ' cols-2' : '') + '">' + g.rows.map(function (r) { return card(r, d.pair); }).join('') + '</div></div>';
+        '<div class="p-grid' + (g.rows.length === 2 ? ' cols-2' : '') + '">' + g.rows.map(function (r) {
+          var am = state.k === 'am', name = am ? '오전반 ' + g.title : CAT[state.k][0];
+          var chip = am ? (/필라테스/.test(g.title) ? 'f-p3' : 'f-p1') : CAT[state.k][1];
+          return card(r, d.pair, { name: name, tier: d.tiers[state.t].name + ' 수업', chip: chip, am: am });
+        }).join('') + '</div></div>';
     }).join('');
   }
   tabs.forEach(function (b) { b.addEventListener('click', function () { state.k = b.dataset.k; state.t = 0; render(); }); });
   tierEl.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { state.t = +b.dataset.i; render(); } });
   render();
+
+  // 가격 카드 → 상담 신청서로 (고른 상품을 자동 입력)
+  bodyEl.addEventListener('click', function (e) {
+    var b = e.target.closest('.pc-cta'); if (!b) return;
+    var f = document.getElementById('trialForm'), memo = document.getElementById('f-msg'), chip = document.getElementById(b.dataset.chip);
+    if (chip) chip.checked = true;
+    if (b.dataset.am) { var sel = document.getElementById('f-time'); sel.selectedIndex = 0; }
+    var line = '관심 상품: ' + b.dataset.product, rest = memo.value.replace(/^관심 상품:.*(\n|$)/, '');
+    memo.value = line + (rest ? '\n' + rest : '');
+    if (window.ldTrack) window.ldTrack('price_cta', { product: b.dataset.product });
+    f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    f.classList.add('pulse'); setTimeout(function () { f.classList.remove('pulse'); }, 1600);
+    setTimeout(function () { var n = document.getElementById('f-name'); if (!n.value) n.focus({ preventScroll: true }); }, 700);
+  });
 
   // 복사 버튼
   document.querySelectorAll('[data-copy]').forEach(function (btn) {
