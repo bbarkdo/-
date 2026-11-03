@@ -565,6 +565,8 @@ html.skin-bf .ev { box-shadow: 0 0 0 1px rgba(255, 212, 0, .4); }
 <!-- 방문 분석: Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7K4CBTXKR"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+/* 전단지 QR 짧은 주소 → 유입 경로 표시로 변환 (GA4가 읽기 전에) */
+(function(){var m={'?a':'?utm_source=flyer&utm_medium=apt&utm_campaign=bf2026'};var q=m[location.search];if(q&&history.replaceState)history.replaceState(null,'',location.pathname+q+location.hash);})();
 /* 자동화 브라우저(크롤러 · 봇)는 방문 기록에서 제외 */
 window.LD_BOT=!!navigator.webdriver;
 if(!window.LD_BOT){gtag('js',new Date());gtag('config','G-V7K4CBTXKR');}</script>
@@ -1184,36 +1186,36 @@ if(!window.LD_BOT)(function(c,l,a,r,i,t,y){
     nav: 'BLACK FRIDAY',
     skin: 'bf',                                   // 기간 중 사이트 전체 블랙 + 옐로 테마 (비우면 기본 디자인)
     end: '2026-11-30T23:59:59+09:00',
-    ribbon: '2026 BLACK FRIDAY · 신규회원 1:1 PT 11회 59만원 · 기구 필라테스 11회 69만원 · 11.30까지',
-    ribbonShort: 'BLACK FRIDAY · PT 11회 59만원~',
+    ribbon: '2026 BLACK FRIDAY · 신규회원 1:1 PT 11회 55만원 · 기구 필라테스 11회 66만원 · 11.30까지',
+    ribbonShort: 'BLACK FRIDAY · PT 11회 55만원~',
     badge: '2026 BLACK FRIDAY · 11.01 – 11.30',
     limit: '신규회원 한정',
     hook: '웨이트와 기구 필라테스, 한 센터에서 모두 1:1로. 목표에 맞는 쪽을 고르세요.',
     title: '11월엔, <em>11회</em>로<br>운동을 시작하세요.',
     sub: '',
-    // 상품 (price · vatIncl은 원 단위, price는 VAT 별도)
+    // 상품 (price · vatIncl은 원 단위, price는 부가세 별도)
     offers: [
-      { tag: 'BLACK 11 PT', title: '1:1 PT <mark>11회</mark>', short: '1:1 PT 11회', sessions: 11, price: 590000, vatIncl: 649000,
+      { tag: 'BLACK 11 PT', title: '1:1 PT <mark>11회</mark>', short: '1:1 PT 11회', sessions: 11, price: 550000, vatIncl: 605000,
         perks: ['헬스장 이용 2개월 포함'], compare: '정상 20회권 회당 60,000원', chip: 'f-p1',
         desc: '<b>근력·체중 관리</b>가 목표라면, 1:1 웨이트 지도.' },
-      { tag: 'BLACK 11 PILATES', title: '1:1 기구 필라테스 <mark>11회</mark>', short: '1:1 기구 필라테스 11회', sessions: 11, price: 690000, vatIncl: 759000,
+      { tag: 'BLACK 11 PILATES', title: '1:1 기구 필라테스 <mark>11회</mark>', short: '1:1 기구 필라테스 11회', sessions: 11, price: 660000, vatIncl: 726000,
         perks: ['헬스장 이용 2개월 포함'], compare: '정상 16회권 회당 73,125원', chip: 'f-p3',
         desc: '<b>그룹이 아닌 1:1</b> 기구 수업. 자세·코어 관리.' },
-      { wide: true, kicker: '둘 다 해보고 싶다면', tag: 'BLACK MIX', title: '웨이트 + 필라테스, 하나의 목표로<br><mark>PT 6회</mark> + <mark>필라테스 6회</mark> = 총 12회',
-        short: 'PT 6 + 필라테스 6 (12회)', sessions: 12, price: 670000, vatIncl: 737000, perks: ['헬스장 이용 2개월 포함'], chip: 'f-p1,f-p3',
+      { wide: true, kicker: '둘 다 해보고 싶다면?', tag: 'BLACK MIX', title: '웨이트 + 필라테스, 하나의 목표로<br><mark>PT 6회</mark> + <mark>필라테스 6회</mark> = 총 12회',
+        short: 'PT 6 + 필라테스 6 (12회)', sessions: 12, price: 600000, vatIncl: 660000, perks: ['헬스장 이용 2개월 포함'], chip: 'f-p1,f-p3',
         desc: '따로 끊는 묶음이 아닙니다. 운동 목표를 먼저 정하고, <b>PT·필라테스 강사가 운동 기록과 지도 방향을 공유</b>하며 진행합니다.' }
     ],
     items: [],
     notes: [
-      '큰 글씨 가격은 VAT 별도 금액이며, 부가세 포함 금액을 함께 표기했습니다.',
+      '큰 글씨 가격은 모두 부가세 별도 금액이며, 부가세 포함 금액을 함께 표기했습니다.',
       '신규회원 대상 · 일반 강사 1:1 수업 기준입니다.',
       '!수강 및 헬스장 이용 기간은 2개월이며, 기간 내 사용하지 않은 횟수는 소멸됩니다.',
-      '정상가는 lifedirector.kr 게시 가격(VAT 별도, 일반 강사) 기준입니다.',
+      '정상가는 lifedirector.kr 게시 가격(부가세 별도, 일반 강사) 기준입니다.',
       '판매 기간: 2026년 11월 1일 ~ 11월 30일 · 세부 조건은 상담 시 안내해 드립니다.'
     ],
-    hero: { kicker: '2026 BLACK FRIDAY', title: '11월엔, <em>11회</em>로 운동을 시작하세요.', note: '신규회원 한정 · VAT 별도 · 11월 30일까지' },
+    hero: { kicker: '2026 BLACK FRIDAY', title: '11월엔, <em>11회</em>로 운동을 시작하세요.', note: '신규회원 한정 · 부가세 별도 · 11월 30일까지' },
     flyer: 'assets/event-2026-11-blackfriday.jpg',
-    flyerAlt: '2026 블랙프라이데이 전단지. 11월엔 11회로 운동을 시작하세요. 1:1 PT 11회 59만원(부가세 포함 649,000원), 1:1 기구 필라테스 11회 69만원(부가세 포함 759,000원), PT 6회와 필라테스 6회 BLACK MIX 67만원(부가세 포함 737,000원), 헬스장 이용 2개월 포함, 신규회원 한정, 11월 1일부터 30일까지',
+    flyerAlt: '2026 블랙프라이데이 전단지. 11월엔 11회로 운동을 시작하세요. 1:1 PT 11회 55만원(부가세 포함 605,000원, 회당 50,000원), 1:1 기구 필라테스 11회 66만원(부가세 포함 726,000원, 회당 60,000원), PT 6회와 필라테스 6회 BLACK MIX 60만원(부가세 포함 660,000원, 회당 50,000원), 헬스장 이용 2개월 포함, 신규회원 한정, 11월 1일부터 30일까지',
     // 이벤트 섹션 색 (전단지: 블랙 바탕 + 화이트 카드 + 옐로 MIX)
     theme: { bg: '#0E1315', fg: '#FFFFFF', muted: 'rgba(255,255,255,.68)', line: 'rgba(255,255,255,.35)',
       card: '#FFFFFF', cardFg: '#111111', cardLine: '#FFFFFF', wide: '#FFD400', wideFg: '#111111', markBg: '#111111', markFg: '#FFD400',
@@ -1244,7 +1246,7 @@ if(!window.LD_BOT)(function(c,l,a,r,i,t,y){
       return '<article class="ev-offer' + (o.wide ? ' wide' : '') + '">' + (o.kicker ? '<span class="o-kicker">' + o.kicker + '</span>' : '') +
         '<p class="o-tag">' + o.tag + '</p><h3 class="o-title">' + o.title + '</h3>' +
         '<div class="o-pricebox"><p class="o-price">' + man(o.price) + '</p>' +
-        '<p class="o-vat"><b>VAT 별도</b>' + (o.vatIncl ? ' · 부가세 포함 ' + won(o.vatIncl) + '원' : '') + '</p></div>' +
+        '<p class="o-vat"><b>부가세 별도</b>' + (o.vatIncl ? ' · 포함 시 ' + won(o.vatIncl) + '원' : '') + '</p></div>' +
         '<ul class="o-perks">' + perks.map(function (x) { return '<li><span>' + x + '</span></li>'; }).join('') + '</ul>' +
         (o.desc ? '<p class="o-desc">' + o.desc + '</p>' : '') +
         '<button type="button" class="o-cta" data-i="' + i + '">이 혜택으로 상담받기</button></article>';
@@ -1254,7 +1256,7 @@ if(!window.LD_BOT)(function(c,l,a,r,i,t,y){
       var o = EVENT.offers[+b.dataset.i], memo = $('f-msg');
       (o.chip || '').split(',').forEach(function (id) { var c = $(id.trim()); if (c) c.checked = true; });
       $('f-ev').checked = true;
-      var line = '관심 상품: ' + EVENT.month + ' ' + o.tag + ' (' + o.short + ' ' + (o.price / 10000) + '만원, VAT 별도)', rest = memo.value.replace(/^관심 상품:.*(\n|$)/, '');
+      var line = '관심 상품: ' + EVENT.month + ' ' + o.tag + ' (' + o.short + ' ' + (o.price / 10000) + '만원, 부가세 별도)', rest = memo.value.replace(/^관심 상품:.*(\n|$)/, '');
       memo.value = line + (rest ? '\n' + rest : '');
       if (window.ldTrack) window.ldTrack('event_offer_cta', { product: o.tag });
       var f = $('trialForm'); f.scrollIntoView({ behavior: 'smooth', block: 'start' });
